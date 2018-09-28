@@ -1,7 +1,9 @@
+import _ from 'lodash'
 import fs from 'fs-extra'
 import path from 'path'
 import yaml from 'js-yaml'
 import { isFile } from '@/util/fs-util'
+import { DefaultGenerateConfig, RawDefaultGenerateConfig } from './generate'
 
 
 const absoluteLocaleConfigPath = path.join(__dirname, 'config.yml')
@@ -13,6 +15,7 @@ const localRawConfig = yaml.safeLoad(localConfigContent)
  * 配置文件的类型
  */
 export interface RawPartialConfig {
+  generate: RawDefaultGenerateConfig
 }
 
 
@@ -28,4 +31,13 @@ export const getPartialRawConfig = async (projectDirectory: string, configPath?:
     const configContent = fs.readFileSync(absoluteConfigPath, 'utf-8')
     return yaml.safeLoad(configContent)
   }
+}
+
+
+/**
+ * 获取子命令 'generate' 的默认选项
+ */
+export const getDefaultGenerateConfig = (partialRawConfig?: RawDefaultGenerateConfig): DefaultGenerateConfig => {
+  const rawConfig = _.cloneDeep(localRawConfig)
+  return new DefaultGenerateConfig(rawConfig.generate, partialRawConfig)
 }

@@ -4,6 +4,7 @@ import { projectConfig } from '@/config/immutable'
 import { getPartialRawConfig, RawPartialConfig } from '@/config'
 import { ensureFileExist, findNearestTarget } from '@/util/fs-util'
 import { coverString } from '@/util/option-util'
+import loadGenerateCommand from './generate'
 
 
 export interface GlobalConfig {
@@ -24,11 +25,15 @@ export default (program: commander.Command) => {
     .option('--encoding <encoding>', 'index encoding of all files.')
     .option('--config-path <config-path>', 'index config path, related with the project root directory where the CMakeLists.txt exists.')
     .option('--no-config', 'don\'t use config.')
+
+  // 挂载 generate 子命令
+  loadGenerateCommand(program, getRawPartialConfig('generate'), getGlobalConfig)
+
   /**
    * 获取外部配置文件
    * @param key
    */
-  function getRawPartialConfig(key: string) {
+  function getRawPartialConfig(key: 'generate') {
     return async (specifiedProjectLocatedPath?: string): Promise<RawPartialConfig|any|undefined> => {
       const globalConfig: GlobalConfig = await getGlobalConfig(specifiedProjectLocatedPath)
       if (program.config === false) return

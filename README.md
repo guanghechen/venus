@@ -1,10 +1,10 @@
 # 前言
 这个命令行工具是为热爱 acm 的同学定制的，它只为解决一个问题：在本地直接引用自己写好的数据结构、算法，而不必丑陋的复制粘贴，在提交代码的时候，通过执行此命令行工具，将所有的依赖都写入到一个文件中。
-使用本工具需要一个条件，就是需要在工程中定义一个 CMakeLists.txt，你可以在 [demo](https://raw.githubusercontent.com/lemon-clown/venus/master/demo) 中查看，强烈建议使用 CLion 构建工程，事实上，本工具就是基于本人
+使用本工具需要一个条件，就是需要在工程中定义一个 CMakeLists.txt，你可以在 [demo](https://github.com/lemon-clown/venus/blob/master/demo) 中查看，强烈建议使用 CLion 构建工程，事实上，本工具就是基于本人
 在 CLion 中的使用设计的：
 * 在 CLion 的 `File -> Settings -> Tools -> Terminal` 的 `Shell Path` 中填上 `'<your git installer path>/bin/sh.exe' --login -i`，它可以让在 Clion 下方的 Terminal 中直接使用 shell （此命令行工具需要在 shell 环境下执行）
 * 在你新建的工程中 `Edit Configurations -> Templates -> Application` 的 `Working directory` 中填入当前工程的根路径
-* 在工程中新建 `CMakeLists.txt`，填入 [demo](https://raw.githubusercontent.com/lemon-clown/venus/master/demo/CMakeLists.txt) 中的内容，强烈建议你构造形如 [demo](https://raw.githubusercontent.com/lemon-clown/venus/master/demo) 中的结构
+* 在工程中新建 `CMakeLists.txt`，填入 [demo](https://github.com/lemon-clown/venus/blob/master/demo/CMakeLists.txt) 中的内容，强烈建议你构造形如 [demo](https://github.com/lemon-clown/venus/blob/master/demo) 中的结构
 * 每次新建文件时，通过 `create/new` 子命令创建，可以将当前文件在 `CMakeLists.txt` 中注册一个 `add_executable` 字段，然后就可以直接 CLion 中调试、运行新创建的文件了
 * 在需要提交的时候，通过 `generate` 子命令生成拥有所有依赖的外部文件的单一源文件（你可以通过一些压缩选项来压缩代码的大小）
 
@@ -40,7 +40,7 @@ npm install -g venus-acm
     remove [options] <source...>
 ```
 
-其中 `Commands` 下方的是子命令，见下文；同时，需要注意的是，你可以通过在工程根目录下指定一个 `venus.config.yml` 来定义命令选项的默认值，见 [demo](https://raw.githubusercontent.com/lemon-clown/venus/master/demo/venus.config.yml)
+其中 `Commands` 下方的是子命令，见下文；同时，需要注意的是，你可以通过在工程根目录下指定一个 `venus.config.yml` 来定义命令选项的默认值，见 [demo](https://github.com/lemon-clown/venus/blob/master/demo/venus.config.yml)
 
 ## 命令选项
 * `--version`: 显示命令的版本
@@ -108,7 +108,7 @@ npm install -g venus-acm
 * `--no-template`: 不使用模板
 * `--data-path`: 数据文件的路径
 * `--no-data`: 不生成 `data.in`，（之所以这么古怪，是因为本工具使用了 `commander.js`，目前版本的 `commander.js` 有一个 bug，若同时声明了 `--data` 和 `--no-data` 选项，则后声明的将覆盖掉之前声明的，目前 `commander.js` 将这 bug 的修复放入了下一个大版本更新计划中，此后本人将会做更新；由于本人擅自认为使用 `freopen` 是更常用的场景（且 generate 时会自动移除掉），因此目前只提供 `--no-data` 选项
-* `--contest <contest-phase`: 解释比较复杂，试试在 [demo](https://raw.githubusercontent.com/lemon-clown/venus/master/demo) 中执行 `venus create --contest=codeforces --round=512 --problem-number=4`
+* `--contest <contest-phase`: 解释比较复杂，试试在 [demo](https://github.com/lemon-clown/venus/blob/master/demo) 中执行 `venus create --contest=codeforces --round=512 --problem-number=4`
 * `--round <contest-round>`: 指定比赛的场次，和 `--contest` 选项配套使用，不可独立出现，且在指定了 `--contest` 选项时，必须同时也指定此选项
 * `--problem-number <contest-round-problem-number>`: 指定本场比赛的题目个数，和 `--contest` 选项配套使用，不可独立出现，且在指定了 `--contest` 选项时，必须同时也指定此选项
 * `--help`: 显示命令的帮助

@@ -1,0 +1,14 @@
+# C++ 语言的相关常量，不可被覆写
+language:
+  macro-mark: '#'
+  quote-mark: [ '''', '"' ]
+  inline-comment-mark: '//'
+  block-comment-mark: [ '/*', '*/' ]
+
+# C++ 工程的相关常量，不可被覆写
+project:
+  definition-phase: VENUS_USE_CMAKE
+  encoding: UTF-8
+  cmakelists:
+    encoding: UTF-8
+    filename: CMakeLists.txt

@@ -1,4 +1,5 @@
 import webpack from 'webpack'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 import paths from './paths'
 
 
@@ -32,6 +33,13 @@ export default {
       banner: '#! /usr/bin/env node',
       raw: true
     }),
+    new CopyWebpackPlugin([
+      {
+        from: paths.appSrcImmutableConfig,
+        to: paths.appTargetImmutableConfig,
+        toType: 'file',
+      },
+    ]),
   ],
   node: {
     __filename: false,

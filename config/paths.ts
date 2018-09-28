@@ -14,6 +14,8 @@ export default {
   appTarget: resolvePath('target'),
   appManifest: resolvePath('package.json'),
   appNodeModules: resolvePath('node_modules'),
+  appSrcImmutableConfig: resolvePath('src', 'config', 'config.immutable.yml'),
+  appTargetImmutableConfig: resolvePath('target', 'config.immutable.yml'),
   appExternals: getExternals(),
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "venus-acm",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "lemonclown",
   "description": "build cpp codes into single sources file.",
   "bin": {

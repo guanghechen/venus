@@ -5,6 +5,7 @@ import { getPartialRawConfig, RawPartialConfig } from '@/config'
 import { ensureFileExist, findNearestTarget } from '@/util/fs-util'
 import { coverString } from '@/util/option-util'
 import loadGenerateCommand from './generate'
+import loadCreateCommand from './create'
 
 
 export interface GlobalConfig {
@@ -29,11 +30,14 @@ export default (program: commander.Command) => {
   // 挂载 generate 子命令
   loadGenerateCommand(program, getRawPartialConfig('generate'), getGlobalConfig)
 
+  // 挂载 create/new 子命令
+  loadCreateCommand(program, getRawPartialConfig('create'), getGlobalConfig)
+
   /**
    * 获取外部配置文件
    * @param key
    */
-  function getRawPartialConfig(key: 'generate') {
+  function getRawPartialConfig(key: 'generate' | 'create') {
     return async (specifiedProjectLocatedPath?: string): Promise<RawPartialConfig|any|undefined> => {
       const globalConfig: GlobalConfig = await getGlobalConfig(specifiedProjectLocatedPath)
       if (program.config === false) return

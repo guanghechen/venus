@@ -4,6 +4,7 @@ import path from 'path'
 import yaml from 'js-yaml'
 import { isFile } from '@/util/fs-util'
 import { DefaultGenerateConfig, RawDefaultGenerateConfig } from './generate'
+import { DefaultCreateConfig, RawDefaultCreateConfig } from './create'
 
 
 const absoluteLocaleConfigPath = path.join(__dirname, 'config.yml')
@@ -16,6 +17,7 @@ const localRawConfig = yaml.safeLoad(localConfigContent)
  */
 export interface RawPartialConfig {
   generate: RawDefaultGenerateConfig
+  create: RawDefaultCreateConfig
 }
 
 
@@ -40,4 +42,13 @@ export const getPartialRawConfig = async (projectDirectory: string, configPath?:
 export const getDefaultGenerateConfig = (partialRawConfig?: RawDefaultGenerateConfig): DefaultGenerateConfig => {
   const rawConfig = _.cloneDeep(localRawConfig)
   return new DefaultGenerateConfig(rawConfig.generate, partialRawConfig)
+}
+
+
+/**
+ * 获取子命令 'create/new' 的默认选项
+ */
+export const getDefaultCreateConfig = (partialRawConfig?: RawDefaultCreateConfig): DefaultCreateConfig => {
+  const rawConfig = _.cloneDeep(localRawConfig)
+  return new DefaultCreateConfig(rawConfig.create, partialRawConfig)
 }

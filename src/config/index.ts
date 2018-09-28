@@ -5,6 +5,7 @@ import yaml from 'js-yaml'
 import { isFile } from '@/util/fs-util'
 import { DefaultGenerateConfig, RawDefaultGenerateConfig } from './generate'
 import { DefaultCreateConfig, RawDefaultCreateConfig } from './create'
+import { DefaultRegisterConfig, RawDefaultRegisterConfig } from './register'
 
 
 const absoluteLocaleConfigPath = path.join(__dirname, 'config.yml')
@@ -18,6 +19,7 @@ const localRawConfig = yaml.safeLoad(localConfigContent)
 export interface RawPartialConfig {
   generate: RawDefaultGenerateConfig
   create: RawDefaultCreateConfig
+  register: RawDefaultRegisterConfig
 }
 
 
@@ -51,4 +53,13 @@ export const getDefaultGenerateConfig = (partialRawConfig?: RawDefaultGenerateCo
 export const getDefaultCreateConfig = (partialRawConfig?: RawDefaultCreateConfig): DefaultCreateConfig => {
   const rawConfig = _.cloneDeep(localRawConfig)
   return new DefaultCreateConfig(rawConfig.create, partialRawConfig)
+}
+
+
+/**
+ * 获取子命令 'register' 的默认选项
+ */
+export const getDefaultRegisterConfig = (partialRawConfig?: RawDefaultRegisterConfig): DefaultRegisterConfig => {
+  const rawConfig = _.cloneDeep(localRawConfig)
+  return new DefaultRegisterConfig(rawConfig.register, partialRawConfig)
 }

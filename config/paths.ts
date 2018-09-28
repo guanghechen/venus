@@ -16,6 +16,8 @@ export default {
   appNodeModules: resolvePath('node_modules'),
   appSrcImmutableConfig: resolvePath('src', 'config', 'config.immutable.yml'),
   appTargetImmutableConfig: resolvePath('target', 'config.immutable.yml'),
+  appSrcConfig: resolvePath('src', 'config', 'config.yml'),
+  appTargetConfig: resolvePath('target', 'config.yml'),
   appExternals: getExternals(),
 }
 

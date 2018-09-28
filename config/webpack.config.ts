@@ -40,6 +40,13 @@ export default {
         toType: 'file',
       },
     ]),
+    new CopyWebpackPlugin([
+      {
+        from: paths.appSrcConfig,
+        to: paths.appTargetConfig,
+        toType: 'file',
+      },
+    ]),
   ],
   node: {
     __filename: false,

@@ -22,3 +22,8 @@ create:
 # default options to sub-command 'register'
 register:
   recursive: false
+
+# default options to sub-command 'remove'
+remove:
+  recursive: false
+  force: false

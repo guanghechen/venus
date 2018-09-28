@@ -6,6 +6,7 @@ import { isFile } from '@/util/fs-util'
 import { DefaultGenerateConfig, RawDefaultGenerateConfig } from './generate'
 import { DefaultCreateConfig, RawDefaultCreateConfig } from './create'
 import { DefaultRegisterConfig, RawDefaultRegisterConfig } from './register'
+import { DefaultRemoveConfig, RawDefaultRemoveConfig } from './remove'
 
 
 const absoluteLocaleConfigPath = path.join(__dirname, 'config.yml')
@@ -20,6 +21,7 @@ export interface RawPartialConfig {
   generate: RawDefaultGenerateConfig
   create: RawDefaultCreateConfig
   register: RawDefaultRegisterConfig
+  remove: RawDefaultRemoveConfig
 }
 
 
@@ -62,4 +64,13 @@ export const getDefaultCreateConfig = (partialRawConfig?: RawDefaultCreateConfig
 export const getDefaultRegisterConfig = (partialRawConfig?: RawDefaultRegisterConfig): DefaultRegisterConfig => {
   const rawConfig = _.cloneDeep(localRawConfig)
   return new DefaultRegisterConfig(rawConfig.register, partialRawConfig)
+}
+
+
+/**
+ * 获取子命令 'remove' 的默认选项
+ */
+export const getDefaultRemoveConfig = (partialRawConfig?: RawDefaultRemoveConfig): DefaultRemoveConfig => {
+  const rawConfig = _.cloneDeep(localRawConfig)
+  return new DefaultRemoveConfig(rawConfig.remove, partialRawConfig)
 }

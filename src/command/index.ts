@@ -7,6 +7,7 @@ import { coverString } from '@/util/option-util'
 import loadGenerateCommand from './generate'
 import loadCreateCommand from './create'
 import loadRegisterCommand from './register'
+import loadRemoveCommand from './remove'
 
 
 export interface GlobalConfig {
@@ -37,11 +38,14 @@ export default (program: commander.Command) => {
   // 挂载 register 子命令
   loadRegisterCommand(program, getRawPartialConfig('register'), getGlobalConfig)
 
+  // 挂载 remove 子命令
+  loadRemoveCommand(program, getRawPartialConfig('remove'), getGlobalConfig)
+
   /**
    * 获取外部配置文件
    * @param key
    */
-  function getRawPartialConfig(key: 'generate' | 'create' | 'register') {
+  function getRawPartialConfig(key: 'generate' | 'create' | 'register' | 'remove') {
     return async (specifiedProjectLocatedPath?: string): Promise<RawPartialConfig|any|undefined> => {
       const globalConfig: GlobalConfig = await getGlobalConfig(specifiedProjectLocatedPath)
       if (program.config === false) return

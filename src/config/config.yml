@@ -1,0 +1,29 @@
+# default options to sub-command 'generate'
+generate:
+  remove-spaces: false
+  remove-comments: false
+  remove-freopen: false
+  force: false
+  copy: false
+
+# default options to sub-command 'new/create'
+create:
+  template:
+    active: false
+    encoding: UTF-8
+    filename: template.cpp
+  data:
+    active: false
+    encoding: UTF-8
+    filename: data.in
+  # 比赛的类型/特征描述：如 codeforces、bestcoder 等
+  categories:
+
+# default options to sub-command 'register'
+register:
+  recursive: false
+
+# default options to sub-command 'remove'
+remove:
+  recursive: false
+  force: false

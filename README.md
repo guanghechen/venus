@@ -3,6 +3,7 @@
 使用本工具需要一个条件，就是需要在工程中定义一个 CMakeLists.txt，你可以在 [demo](https://github.com/lemon-clown/venus/blob/master/demo) 中查看，强烈建议使用 CLion 构建工程，事实上，本工具就是基于本人
 在 CLion 中的使用设计的：
 * 在 CLion 的 `File -> Settings -> Tools -> Terminal` 的 `Shell Path` 中填上 `'<your git installer path>/bin/sh.exe' --login -i`，它可以让在 Clion 下方的 Terminal 中直接使用 shell （此命令行工具需要在 shell 环境下执行）
+* 将你的本地类库文件夹中右键（在 CLion 中操作），`Mark directory as` => `Library Files/Project Sources and Headers`
 * 在你新建的工程中 `Edit Configurations -> Templates -> Application` 的 `Working directory` 中填入当前工程的根路径
 * 在工程中新建 `CMakeLists.txt`，填入 [demo](https://github.com/lemon-clown/venus/blob/master/demo/CMakeLists.txt) 中的内容，强烈建议你构造形如 [demo](https://github.com/lemon-clown/venus/blob/master/demo) 中的结构
 * 每次新建文件时，通过 `create/new` 子命令创建，可以将当前文件在 `CMakeLists.txt` 中注册一个 `add_executable` 字段，然后就可以直接 CLion 中调试、运行新创建的文件了

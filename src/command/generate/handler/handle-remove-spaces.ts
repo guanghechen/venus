@@ -42,5 +42,19 @@ export const handleRemoveSpaces = (content: string): string => {
     .map(({ start, content }) => ({ start, content: `\n${content}\n` }))
     .map(({ start, content }) => ({ start, content: removeCommonSpacesPrefix(content) }))
 
-  return merge(sourceItem)
+  const header = merge({
+    ...sourceItem,
+    sources: [],
+    literals: [],
+    comments:[],
+    macros: [],
+  }).trim()
+
+  const body = merge({
+    ...sourceItem,
+    dependencies: [],
+    namespaces: [],
+  }).trim()
+
+  return header.concat('\n').concat(body)
 }

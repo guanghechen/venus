@@ -36,7 +36,7 @@ export const merge = (sourceItem: SourceItem) => {
       return item.content
     })
 
-  const dependencies = [ ...new Set(sourceItem.dependencies) ]
+  const dependencies: string = [ ...new Set(sourceItem.dependencies) ]
     .sort((x: string, y: string) => {
       if (x == y) return 0
       if (x.length !== y.length) return x.length - y.length
@@ -45,12 +45,24 @@ export const merge = (sourceItem: SourceItem) => {
     .map(dependency => `#include<${dependency}>\n`)
     .join('')
 
+  const namespaceSet: Set<string> = new Set<string>()
+  const namespaces: string = sourceItem.namespaces
+    .filter(ns => {
+      if (namespaceSet.has(ns)) return false
+      namespaceSet.add(ns)
+      return true
+    })
+    .map(ns => `using namespace ${ns};\n`)
+    .join('')
+
   const content = contentPieces
     .join('')
     .trim()
     .replace(/(\n\s*?){2,}/g, '\n\n')
     .concat('\n')
 
-  if (content.startsWith('using')) return dependencies.concat(content)
-  return dependencies.concat('\n').concat(content)
+  return dependencies
+    .concat(namespaces)
+    .concat('\n\n')
+    .concat(content.trimLeft())
 }

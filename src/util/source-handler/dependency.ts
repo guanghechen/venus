@@ -70,8 +70,8 @@ export const resolveDependencies = async (resolveDependencyPath: (dependencies: 
   await Promise.all(localDependencies.map(async dependency => {
     await ensureFileExist(dependency)
     const content = await fs.readFile(dependency, { encoding })
-    const { macros, sources, comments, literals } = partition(content)
-    result += merge({ dependencies: [], macros, sources, comments, literals }) + '\n'
+    const { macros, sources, comments, literals, namespaces } = partition(content)
+    result += merge({ dependencies: [], macros, sources, comments, literals, namespaces }) + '\n'
   }))
 
   return merge({

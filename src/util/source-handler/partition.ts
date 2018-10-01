@@ -10,6 +10,12 @@ const getImportRegex = (flags?: string) => new RegExp(/#include\s*[<"]([\w\-_.:\
 
 
 /**
+ * 获取命令空间列表
+ */
+const getNamespaceRegex = (flags?: string) => new RegExp(/using\s+namespace\s+(\w+);\s*/, flags)
+
+
+/**
  * 从指定位置开始匹配一个宏
  *
  * @param content   源码
@@ -105,6 +111,7 @@ export const partition = (content: string): SourceItem => {
   const comments: SourcePiece[] = []
   const literals: SourcePiece[] = []
   const dependencies: string[] = []
+  const namespaces: string[] = []
 
   let lastIndex = 0
   for (let i=lastIndex; i < content.length; ++i) {
@@ -155,6 +162,14 @@ export const partition = (content: string): SourceItem => {
     })
   })
 
+  // 获取命令空间
+  sources.forEach(source => {
+    source.content = source.content.replace(getNamespaceRegex('g'), (match: string, ns: string) => {
+      namespaces.push(ns)
+      return ''
+    })
+  })
+
   const filterNotEmptyPiece = (sourcePiece: SourcePiece) => sourcePiece.content.length > 0
 
   return {
@@ -163,5 +178,6 @@ export const partition = (content: string): SourceItem => {
     comments: comments.filter(filterNotEmptyPiece),
     literals: literals.filter(filterNotEmptyPiece),
     dependencies: [ ...new Set(dependencies)].filter(d => d.length > 0),
+    namespaces: namespaces.filter(ns => ns.length > 0),
   }
 }

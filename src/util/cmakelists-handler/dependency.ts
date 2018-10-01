@@ -28,23 +28,24 @@ export const resolveLocalDependencyPath = async (dependencies: string[],
   for (let dependency of dependencies) {
     let resolvedDependency: string | null = null
 
-    // 检查是否为相对路径引用
-    if (dependency.startsWith('.')) {
-      // 尝试以源文件所在路径为参考路径
+
+    // 尝试用 CMakeLists.txt 中定义的依赖的路径为参考路径
+    for (let i=0; i < includeDirectories.length; ++i) {
+      let absoluteDependencyPath = path.resolve(projectRootDirectory, includeDirectories[i], dependency)
+      if (await isFile(absoluteDependencyPath)) {
+        resolvedDependency = absoluteDependencyPath
+        break
+      }
+    }
+
+    // 否则尝试以源文件所在路径为参考路径
+    if (resolvedDependency == null) {
       const absoluteDependencyPath = path.resolve(absoluteSourceDirectory, dependency)
       if (await isFile(absoluteDependencyPath)) {
         resolvedDependency = absoluteDependencyPath
       }
-    } else {
-      // 否则尝试用 CMakeLists.txt 中定义的依赖的路径为参考路径
-      for (let i=0; i < includeDirectories.length; ++i) {
-        let absoluteDependencyPath = path.resolve(projectRootDirectory, includeDirectories[i], dependency)
-        if (await isFile(absoluteDependencyPath)) {
-          resolvedDependency = absoluteDependencyPath
-          break
-        }
-      }
     }
+
     resolvedDependencies.push(resolvedDependency)
   }
   return resolvedDependencies

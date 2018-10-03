@@ -1,4 +1,5 @@
 import { CMakeLists } from './index'
+import { projectConfig } from '@/config/immutable'
 
 
 /**
@@ -14,6 +15,9 @@ export const merge = (cmakeLists: CMakeLists): string => {
   const includeDirectories: string = cmakeLists.includes
     .map(include => `include_directories(${include})`)
     .join('\n')
+
+  // 添加默认编译选项
+  cmakeLists.compileDefinitions.set(projectConfig.definitionPhase, '')
 
   // add_compile_definitions
   const addCompileDefinitionSet: Set<string> = new Set<string>()

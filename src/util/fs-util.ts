@@ -117,7 +117,7 @@ export async function collectFiles(p: string, recursive: boolean, patterns?: str
         result.push(file)
     }
     else if (recursive && await isDirectory(file)) {
-      result.push(...await collectFiles(file, recursive))
+      result.push(...await collectFiles(file, recursive, patterns))
     }
   }
   return result

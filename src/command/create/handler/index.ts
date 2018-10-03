@@ -82,7 +82,7 @@ export class CreateHandler {
     logger.info(`written into ${relativeSourcePath}.`)
 
     // 注册进 CmakeLists.txt 中
-    await register(cmakeLists.filepath, cmakeLists.encoding, projectRootDirectory, absoluteSourcePath)
+    await register(cmakeLists.filepath, cmakeLists.encoding, executeDirectory, projectRootDirectory, absoluteSourcePath)
   }
 
   /**

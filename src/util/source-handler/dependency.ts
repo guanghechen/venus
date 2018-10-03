@@ -20,6 +20,8 @@ export const resolveDependencies = async (resolveDependencyPath: (dependencies: 
   const localDependencies: string[] = []                  // 按照依赖的出现顺序添加的本地依赖
   const standardDependencies: string[] = []               // 标准库依赖
   const dependencySet: Set<string> = new Set<string>()    // 用于判重
+  const namespaces: string[] = []
+  const typedefs: Map<string, string> = new Map<string, string>()
 
   /**
    * 收集所有的标准库依赖和本地库依赖
@@ -70,12 +72,19 @@ export const resolveDependencies = async (resolveDependencyPath: (dependencies: 
   await Promise.all(localDependencies.map(async dependency => {
     await ensureFileExist(dependency)
     const content = await fs.readFile(dependency, { encoding })
-    const { macros, sources, comments, literals, namespaces } = partition(content)
-    result += merge({ dependencies: [], macros, sources, comments, literals, namespaces }) + '\n'
+    const sourceItem = partition(content)
+    namespaces.push(...sourceItem.namespaces)
+    ; [...sourceItem.typedefs.entries()].forEach(([key, val]) => typedefs.set(key, val))
+    result += merge({ ...sourceItem, dependencies: [] }).concat('\n')
   }))
 
+  const sourceItem = partition(result)
+  namespaces.push(...sourceItem.namespaces)
+  ; [...sourceItem.typedefs.entries()].forEach(([key, val]) => typedefs.set(key, val))
   return merge({
-    ...partition(result),
+    ...sourceItem,
     dependencies: standardDependencies,
+    namespaces,
+    typedefs,
   })
 }

@@ -42,8 +42,8 @@ export const merge = (sourceItem: SourceItem) => {
       if (x.length !== y.length) return x.length - y.length
       return x < y? -1: 1
     })
-    .map(dependency => `#include<${dependency}>\n`)
-    .join('')
+    .map(dependency => `#include<${dependency}>`)
+    .join('\n')
 
   const namespaceSet: Set<string> = new Set<string>()
   const namespaces: string = sourceItem.namespaces
@@ -52,8 +52,12 @@ export const merge = (sourceItem: SourceItem) => {
       namespaceSet.add(ns)
       return true
     })
-    .map(ns => `using namespace ${ns};\n`)
-    .join('')
+    .map(ns => `using namespace ${ns};`)
+    .join('\n')
+
+  const typedefs: string = [...sourceItem.typedefs.entries()]
+    .map(([alias, raw]) => `typedef ${raw} ${alias};`)
+    .join('\n')
 
   const content = contentPieces
     .join('')
@@ -62,7 +66,8 @@ export const merge = (sourceItem: SourceItem) => {
     .concat('\n')
 
   return dependencies
-    .concat(namespaces)
-    .concat('\n\n')
-    .concat(content.trimLeft())
+    .concat(namespaces != null && namespaces.length > 0? '\n' + namespaces: '')
+    .concat('\n\n\n')
+    .concat(typedefs != null && typedefs.length > 0? typedefs + '\n\n': '')
+    .concat(content.trim())
 }

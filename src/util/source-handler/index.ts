@@ -18,6 +18,7 @@ export interface SourcePiece {
  * @attr literals           明文字符串列表
  * @attr dependencies       依赖
  * @attr namespaces         被导入到当前文件中的命名空间
+ * @attr typedef            类型别名的语句列表
  */
 export interface SourceItem {
   macros: SourcePiece[]
@@ -26,4 +27,5 @@ export interface SourceItem {
   literals: SourcePiece[]
   dependencies: string[]
   namespaces: string[]
+  typedefs: Map<string, string>
 }

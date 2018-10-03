@@ -20,6 +20,13 @@ create:
       problem-number: 5
 
 remove:
+  recursive: false
+  force: false
+
+clean:
   recursive: true
   force: true
-
+  patterns:
+    - '*.o'
+    - '*.exe'
+    - '_venus_*.cpp'

@@ -1,3 +1,4 @@
+import fs from 'fs-extra'
 import path from 'path'
 import { DefaultGenerateConfig } from '@/config/generate'
 import { ensureFileExist } from '@/util/fs-util'
@@ -10,7 +11,7 @@ import { handleRemoveSpaces } from './handle-remove-spaces'
 import { handleRemoveFreopen } from './handle-remove-freopens'
 import { handleCopy } from './handle-copy'
 import { handleSave } from './handle-save'
-import { handleRemoveDefinition } from '@/command/generate/handler/handle-remove-definitions'
+import { handleRemoveDefinition } from './handle-remove-definitions'
 
 
 interface GenerateArgument {
@@ -60,13 +61,13 @@ export class GenerateHandler {
     let content: string
 
     // 解决依赖
+    const cmakeListsContent = await fs.readFile(cmakeLists.filepath, { encoding })
     content = await resolveDependencies(
       (dependencies: string[], absoluteSourcePath: string) => {
         return resolveLocalDependencyPath(
           dependencies,
           absoluteSourcePath,
-          cmakeLists.filepath,
-          cmakeLists.encoding,
+          cmakeListsContent,
           projectRootDirectory
         )
       },

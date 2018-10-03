@@ -1,6 +1,6 @@
 import path from 'path'
 import { isFile } from '@/util/fs-util'
-import { parseCmakeLists } from './parse'
+import { partition } from './partition'
 
 
 /**
@@ -8,30 +8,27 @@ import { parseCmakeLists } from './parse'
  *
  * @param dependencies          依赖列表
  * @param absoluteSourcePath    源文件的绝对路径（引用了该依赖的源文件）
- * @param cmakeListsPath        CMakeLists.txt 的绝对路径
- * @param cmakeListsEncoding    CMakeLists.txt 的文件编码
+ * @param cmakeListsContent     CMakeLists.txt 的内容
  * @param projectRootDirectory  目标工程的根目录（CMakeLists.txt 所在的目录）
  * @return {(string | null)[]} 如果本地存在目标文件，则返回其绝对路径，否则返回 null
  */
 export const resolveLocalDependencyPath = async (dependencies: string[],
                                                  absoluteSourcePath: string,
-                                                 cmakeListsPath: string,
-                                                 cmakeListsEncoding: string,
+                                                 cmakeListsContent: string,
                                                  projectRootDirectory: string): Promise<(string | null)[]> => {
   // 源文件所在的目录
   const absoluteSourceDirectory = path.dirname(absoluteSourcePath)
 
   // 获取 CMakeLists.txt 中定义的依赖的路径
-  const { includeDirectories } = await parseCmakeLists(cmakeListsPath, cmakeListsEncoding)
+  const { includes } = await partition(cmakeListsContent)
   const resolvedDependencies: (string | null)[] = []
 
   for (let dependency of dependencies) {
     let resolvedDependency: string | null = null
 
-
     // 尝试用 CMakeLists.txt 中定义的依赖的路径为参考路径
-    for (let i=0; i < includeDirectories.length; ++i) {
-      let absoluteDependencyPath = path.resolve(projectRootDirectory, includeDirectories[i], dependency)
+    for (let i=0; i < includes.length; ++i) {
+      let absoluteDependencyPath = path.resolve(projectRootDirectory, includes[i], dependency)
       if (await isFile(absoluteDependencyPath)) {
         resolvedDependency = absoluteDependencyPath
         break

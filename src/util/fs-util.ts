@@ -1,5 +1,6 @@
 import fs from 'fs-extra'
 import path from 'path'
+import minimatch from 'minimatch'
 import { logger } from '@/util/logger'
 
 
@@ -102,14 +103,19 @@ export async function findNearestTarget(p: string, target: string): Promise<stri
  *
  * @param p           目录路径
  * @param recursive   是否递归收集
+ * @param patterns    匹配模式
  * @return 该目录下的路径列表
  */
-export async function collectFiles(p: string, recursive: boolean): Promise<string[]> {
+export async function collectFiles(p: string, recursive: boolean, patterns?: string[]): Promise<string[]> {
   let files = await fs.readdir(p)
   let result: string[] = []
   for (let file of files) {
     file = path.resolve(p, file)
-    if (await isFile(file)) result.push(file)
+    if (await isFile(file)) {
+      // 需要满足特定的 pattern 的文件才将删除
+      if (patterns == null || patterns.some(pattern => minimatch(file, pattern, { matchBase: true })))
+        result.push(file)
+    }
     else if (recursive && await isDirectory(file)) {
       result.push(...await collectFiles(file, recursive))
     }

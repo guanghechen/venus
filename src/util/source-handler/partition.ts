@@ -12,7 +12,13 @@ const getImportRegex = (flags?: string) => new RegExp(/#include\s*[<"]([\w\-_.:\
 /**
  * 获取命令空间列表
  */
-const getNamespaceRegex = (flags?: string) => new RegExp(/using\s+namespace\s+(\w+);\s*/, flags)
+const getNamespaceRegex = (flags?: string) => new RegExp(/using\s+namespace\s+(\w+)\s*;\s*/, flags)
+
+
+/**
+ * 获取类型别名列表
+ */
+const getTypedefRegex = (flags?: string) => new RegExp(/typedef\s+([\w* <>]+)\s+(\w+)\s*;\s*/, flags)
 
 
 /**
@@ -112,6 +118,7 @@ export const partition = (content: string): SourceItem => {
   const literals: SourcePiece[] = []
   const dependencies: string[] = []
   const namespaces: string[] = []
+  const typedefs: Map<string, string> = new Map<string, string>()
 
   let lastIndex = 0
   for (let i=lastIndex; i < content.length; ++i) {
@@ -152,7 +159,7 @@ export const partition = (content: string): SourceItem => {
   }
 
   // 最后一片是源码
-  sources.push({ start: lastIndex, content: content.slice(lastIndex)})
+  sources.push({ start: lastIndex, content: content.slice(lastIndex) })
 
   // 获取依赖
   macros.forEach(macro => {
@@ -170,6 +177,14 @@ export const partition = (content: string): SourceItem => {
     })
   })
 
+  // 获取 typedef
+  sources.forEach(source => {
+    source.content = source.content.replace(getTypedefRegex('g'), (match: string, raw: string, alias: string) => {
+      typedefs.set(alias, raw)
+      return ''
+    })
+  })
+
   const filterNotEmptyPiece = (sourcePiece: SourcePiece) => sourcePiece.content.length > 0
 
   return {
@@ -179,5 +194,6 @@ export const partition = (content: string): SourceItem => {
     literals: literals.filter(filterNotEmptyPiece),
     dependencies: [ ...new Set(dependencies)].filter(d => d.length > 0),
     namespaces: namespaces.filter(ns => ns.length > 0),
+    typedefs,
   }
 }

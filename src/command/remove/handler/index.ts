@@ -1,12 +1,12 @@
 import fs from 'fs-extra'
+import { DefaultRemoveConfig } from '@/config/remove'
 import { collectFiles, ensureExist, ensureFileExist, isDirectory, isFile } from '@/util/fs-util'
 import { coverBoolean } from '@/util/option-util'
 import { remove } from '@/util/cmakelists-handler/remove'
-import { DefaultRemoveConfig } from '@/config/remove'
-import { GlobalConfig } from '@/command'
 import { logger } from '@/util/logger'
 import { yesOrNo } from '@/util/cli-util'
 import { relativePath } from '@/util/path-util'
+import { GlobalConfig } from '@/command'
 
 
 interface RemoveArgument {
@@ -40,7 +40,7 @@ export class RemoveHandler {
   }
 
   public async handle() {
-    const { executeDirectory, projectRootDirectory, cmakeLists, encoding } = this.resolvedGlobalConfig
+    const { executeDirectory, projectRootDirectory } = this.resolvedGlobalConfig
     const resolvedConfig = await this.config
 
     const { absoluteSourcePath } = resolvedConfig
@@ -77,7 +77,6 @@ export class RemoveHandler {
    */
   private async doRemove(absoluteSourcePath: string, force: boolean) {
     const { projectRootDirectory, executeDirectory, cmakeLists } = this.resolvedGlobalConfig
-    const relativeCMakeListsPath = relativePath(projectRootDirectory, cmakeLists.filepath)
 
     // 相对于执行命令所在的路径的相对路径，用于友好的提示
     const relativeSourcePath = relativePath(executeDirectory, absoluteSourcePath, projectRootDirectory)
@@ -94,11 +93,7 @@ export class RemoveHandler {
     logger.info(`removed ${relativeSourcePath}`)
 
     // 从 CmakeLists.txt 中删除
-    if (await remove(cmakeLists.filepath, cmakeLists.encoding, projectRootDirectory, absoluteSourcePath)) {
-      logger.debug(`removed ${relativeSourcePath} from ${relativeCMakeListsPath}.`)
-    } else {
-      logger.debug(`${relativeSourcePath} is not found in ${relativeCMakeListsPath}.`)
-    }
+    await remove(cmakeLists.filepath, cmakeLists.encoding, executeDirectory, projectRootDirectory, absoluteSourcePath)
   }
 
   /**

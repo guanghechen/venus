@@ -39,6 +39,7 @@ npm install -g venus-acm
     create|new [options] [source...]
     register [options] <source...>
     remove [options] <source...>
+    clean [options] [directory]
 ```
 
 其中 `Commands` 下方的是子命令，见下文；同时，需要注意的是，你可以通过在工程根目录下指定一个 `venus.config.yml` 来定义命令选项的默认值，见 [demo](https://github.com/lemon-clown/venus/blob/master/demo/venus.config.yml)
@@ -122,7 +123,7 @@ npm install -g venus-acm
 
   Options:
 
-    -r, --recursive  don't use data.
+    -r, --recursive  register all files in the directory recursively.
     -h, --help       output usage information
 ```
 
@@ -140,7 +141,8 @@ npm install -g venus-acm
 
   Options:
 
-    -r, --recursive  don't use data.
+    -r, --recursive  remove all files in the directory recursively.
+    -f, --force      remove file without confirmation.
     -h, --help       output usage information
 ```
 
@@ -148,4 +150,27 @@ npm install -g venus-acm
 
 ## 命令选项
 * `--recursive`: 当 source 为文件夹时，若指定该选项，则将扫描该文件夹下的整棵目录树
+* `--force`: 删除时，无需用户确认
+* `--help`: 显示命令的帮助
+
+# 子命令 clean
+执行 `venus clean --help` 可以看到 `clean` 的用法：
+```shell
+  Usage: clean [options] [directory]
+
+
+  Options:
+
+    -r, --recursive          remove all files in the directory recursively.
+    -f, --force              clean file without confirmation.
+    -p, --pattern <pattern>  clean file which should matched the pattern. (default: )
+    -h, --help               output usage information
+```
+
+这个命令用于清理指定文件夹下的无用文件，并清理 CMakeLists.txt 中无用的 `add_executable` 条目，当未指定路径时，则当前执行命令的路径作为参数
+
+## 命令选项
+* `--recursive`: 递归清理
+* `--force`: 删除时，无需用户确认
+* `--pattern`: 指定需要删除的模式（minimatch 匹配的模式），可以多次指定该选项，也可以在 `venus.config.yml` 中配置默认的模式
 * `--help`: 显示命令的帮助

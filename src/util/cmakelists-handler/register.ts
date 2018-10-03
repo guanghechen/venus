@@ -1,8 +1,10 @@
 import fs from 'fs-extra'
 import path from 'path'
+import { logger } from '@/util/logger'
 import { relativePath } from '@/util/path-util'
-import { parseCmakeLists } from './parse'
-import { getAddExecutableRegex } from './regex'
+import { ensureFileExist } from '@/util/fs-util'
+import { merge } from './merge'
+import { partition } from './partition'
 
 
 /**
@@ -27,75 +29,53 @@ const generateExecutableTargetName = (relativeSourcePath: string): string => {
  *
  * @param cmakeListsPath
  * @param cmakeEncoding
+ * @param executeDirectory
  * @param projectRootDirectory
  * @param absoluteSourcePath
  * @param targetName
  */
 export const register = async (cmakeListsPath: string,
                                cmakeEncoding: string,
+                               executeDirectory: string,
                                projectRootDirectory: string,
                                absoluteSourcePath: string,
                                targetName?: string): Promise<boolean> => {
+  // 确保 CMakeLists.txt 存在
+  await ensureFileExist(cmakeListsPath, 'bad cmake-lists file:')
+  let content = await fs.readFile(cmakeListsPath, { encoding: cmakeEncoding })
+
+  const cmakeLists = partition(content)
   const targetPath = relativePath(projectRootDirectory, absoluteSourcePath)
+  const { executables } = cmakeLists
 
-  // 如果 targetPath 已经在 CMakeLists 中了（已注册），则直接返回
-  const { addExecutableMap } = await parseCmakeLists(cmakeListsPath, cmakeEncoding)
-  const addExecutableSet = new Set(addExecutableMap.values())
-
-  if (!addExecutableSet.has(targetPath)) {
+  if (!executables.has(targetPath)) {
     // 如果 targetName 未指定或未空字符串，则生成一个名字
     if (targetName == null || targetName.length < 0)
       targetName = await generateExecutableTargetName(targetPath)
 
     // 如果 targetName 已经存在，则在末尾加序号
-    if (addExecutableMap.has(targetName)) {
+    if (executables.has(targetName)) {
       for (let code = 1; ; ++code) {
         let newTargetName = targetName.indexOf('.') === -1
           ? `${targetName}-${code}`
           : targetName.replace(/\./, `-${code}.`)
-        if (addExecutableMap.has(newTargetName)) continue
+        if (executables.has(newTargetName)) continue
         targetName = newTargetName
         break
       }
     }
 
     // 添加条目
-    addExecutableMap.set(targetName, targetPath)
+    executables.set(targetName, targetPath)
   }
 
-  addExecutableSet.clear()
-  const executableItems = [...addExecutableMap.entries()]
-    .sort((alpha, beta) => {
-      if (alpha[1] === beta[1]) return alpha[0].localeCompare(beta[0])
-      return alpha[1].localeCompare(beta[1])
-    })
-    .filter(([key, val]) => {
-      if (addExecutableSet.has(val)) return false
-      addExecutableSet.add(val)
-      return true
-    })
-
-  // add_executable 的左侧填充到等长
-  let maxLength = executableItems.reduce((m, c) => Math.max(m, c[0].length), 0)
-  maxLength += (maxLength&1)
-  const fillSpaces = (text: string) => text + ' '.repeat(maxLength - text.length)
-
-  const executables = executableItems
-    .map(item => `add_executable(${fillSpaces(item[0])} ${item[1]})`)
-    .join('\n')
-
-  // 删除 executable
-  const addExecutableRegex = getAddExecutableRegex()
-  let content: string = await fs.readFile(cmakeListsPath, { encoding: cmakeEncoding })
-  content = content
-    .split(/\n/g)
-    .filter(text => !addExecutableRegex.test(text))
-    .join('\n')
-    .concat('\n' + executables + '\n')
-    .replace(/(\n\s*){2,}/g, '\n\n')
-
   // 写进 CMakeLists.txt 中
+  content = merge({ ...cmakeLists, executables })
   await fs.writeFile(cmakeListsPath, content, cmakeEncoding)
+
+  // 相对于执行命令所在的路径的相对路径，用于友好的提示
+  const relativeCMakeListsPath = relativePath(projectRootDirectory, cmakeListsPath)
+  const relativeSourcePath = relativePath(executeDirectory, absoluteSourcePath, projectRootDirectory)
+  logger.debug(`registered ${relativeSourcePath} to ${relativeCMakeListsPath}.`)
   return true
 }
-

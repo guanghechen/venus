@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 project(acm)
 set(CMAKE_CXX_STANDARD 11)
 
-add_definitions(-DVENUS_USE_CMAKE)
+add_compile_definitions(-DVENUS_USE_CMAKE)
 
 include_directories(src)
 

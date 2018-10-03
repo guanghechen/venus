@@ -20,6 +20,8 @@ export const resolveDependencies = async (resolveDependencyPath: (dependencies: 
   const localDependencies: string[] = []                  // 按照依赖的出现顺序添加的本地依赖
   const standardDependencies: string[] = []               // 标准库依赖
   const dependencySet: Set<string> = new Set<string>()    // 用于判重
+  const namespaces: string[] = []
+  const typedefs: Map<string, string> = new Map<string, string>()
 
   /**
    * 收集所有的标准库依赖和本地库依赖
@@ -53,9 +55,10 @@ export const resolveDependencies = async (resolveDependencyPath: (dependencies: 
       const resolvedDependency = resolvedDependencies[i]
       if (resolvedDependency == null) standardDependencies.push(dependency)
       else {
-        // 本地依赖，继续递归解决依赖，前面 dependenceSet 去重的处理已经保证了拓扑序
-        localDependencies.push(resolvedDependency)
+        // 本地依赖，先递归解决依赖，前面 dependenceSet 去重的处理已经保证了拓扑序
         await collectDependencies(resolvedDependency)
+        // 保证当前依赖的依赖已全部满足
+        localDependencies.push(resolvedDependency)
       }
     }
   }
@@ -65,17 +68,24 @@ export const resolveDependencies = async (resolveDependencyPath: (dependencies: 
 
   let result: string = ''
 
-  // 按照依赖的拓扑序逆序将代码拼接，并将源文件添加到末尾，使得生成的代码中出现在最下面
-  localDependencies.reverse().push(absoluteSourcePath)
+  // 按照依赖的拓扑序将代码拼接，并将源文件添加到末尾，使得生成的代码中出现在最下面
+  localDependencies.push(absoluteSourcePath)
   await Promise.all(localDependencies.map(async dependency => {
     await ensureFileExist(dependency)
     const content = await fs.readFile(dependency, { encoding })
-    const { macros, sources, comments, literals, namespaces } = partition(content)
-    result += merge({ dependencies: [], macros, sources, comments, literals, namespaces }) + '\n'
+    const sourceItem = partition(content)
+    namespaces.push(...sourceItem.namespaces)
+    ; [...sourceItem.typedefs.entries()].forEach(([key, val]) => typedefs.set(key, val))
+    result += merge({ ...sourceItem, dependencies: [] }).concat('\n')
   }))
 
+  const sourceItem = partition(result)
+  namespaces.push(...sourceItem.namespaces)
+  ; [...sourceItem.typedefs.entries()].forEach(([key, val]) => typedefs.set(key, val))
   return merge({
-    ...partition(result),
+    ...sourceItem,
     dependencies: standardDependencies,
+    namespaces,
+    typedefs,
   })
 }

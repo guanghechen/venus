@@ -48,13 +48,22 @@ export const handleRemoveSpaces = (content: string): string => {
     literals: [],
     comments:[],
     macros: [],
+    typedefs: new Map<string, string>(),
   }).trim()
 
   const body = merge({
     ...sourceItem,
     dependencies: [],
     namespaces: [],
+    typedefs: new Map<string, string>(),
   }).trim()
 
-  return header.concat('\n').concat(body)
+  const typedefs: string = [...sourceItem.typedefs.entries()]
+    .map(([alias, raw]) => `typedef ${raw} ${alias};`)
+    .join('')
+
+  return header
+    .concat('\n')
+    .concat(typedefs)
+    .concat(body)
 }

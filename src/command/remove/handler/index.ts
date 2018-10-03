@@ -77,7 +77,6 @@ export class RemoveHandler {
    */
   private async doRemove(absoluteSourcePath: string, force: boolean) {
     const { projectRootDirectory, executeDirectory, cmakeLists } = this.resolvedGlobalConfig
-    const relativeCMakeListsPath = relativePath(projectRootDirectory, cmakeLists.filepath)
 
     // 相对于执行命令所在的路径的相对路径，用于友好的提示
     const relativeSourcePath = relativePath(executeDirectory, absoluteSourcePath, projectRootDirectory)

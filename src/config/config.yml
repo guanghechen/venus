@@ -27,3 +27,9 @@ register:
 remove:
   recursive: false
   force: false
+
+# default options to sub-command 'clean'
+clean:
+  recursive: false
+  force: false
+  patterns: []

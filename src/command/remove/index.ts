@@ -12,7 +12,7 @@ export default (program: commander.Command,
                 getGlobalConfig: (specifiedProjectLocatedPath?: string) => Promise<GlobalConfig>) => {
   program
     .command(`remove <source...>`)
-    .option(`-r, --recursive`, `don't use data.`)
+    .option(`-r, --recursive`, `remove all files in the directory recursively.`)
     .option(`-f, --force`, `remove file without confirmation.`)
     .action(async (sourcePaths: string[], option) => {
       const sourcePathSet: Set<string> = new Set<string>()

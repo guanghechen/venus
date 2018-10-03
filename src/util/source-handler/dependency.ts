@@ -55,9 +55,10 @@ export const resolveDependencies = async (resolveDependencyPath: (dependencies: 
       const resolvedDependency = resolvedDependencies[i]
       if (resolvedDependency == null) standardDependencies.push(dependency)
       else {
-        // 本地依赖，继续递归解决依赖，前面 dependenceSet 去重的处理已经保证了拓扑序
-        localDependencies.push(resolvedDependency)
+        // 本地依赖，先递归解决依赖，前面 dependenceSet 去重的处理已经保证了拓扑序
         await collectDependencies(resolvedDependency)
+        // 保证当前依赖的依赖已全部满足
+        localDependencies.push(resolvedDependency)
       }
     }
   }
@@ -67,8 +68,8 @@ export const resolveDependencies = async (resolveDependencyPath: (dependencies: 
 
   let result: string = ''
 
-  // 按照依赖的拓扑序逆序将代码拼接，并将源文件添加到末尾，使得生成的代码中出现在最下面
-  localDependencies.reverse().push(absoluteSourcePath)
+  // 按照依赖的拓扑序将代码拼接，并将源文件添加到末尾，使得生成的代码中出现在最下面
+  localDependencies.push(absoluteSourcePath)
   await Promise.all(localDependencies.map(async dependency => {
     await ensureFileExist(dependency)
     const content = await fs.readFile(dependency, { encoding })

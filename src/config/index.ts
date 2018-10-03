@@ -7,6 +7,7 @@ import { DefaultGenerateConfig, RawDefaultGenerateConfig } from './generate'
 import { DefaultCreateConfig, RawDefaultCreateConfig } from './create'
 import { DefaultRegisterConfig, RawDefaultRegisterConfig } from './register'
 import { DefaultRemoveConfig, RawDefaultRemoveConfig } from './remove'
+import { DefaultCleanConfig, RawDefaultCleanConfig } from '@/config/clean'
 
 
 const absoluteLocaleConfigPath = path.join(__dirname, 'config.yml')
@@ -22,6 +23,7 @@ export interface RawPartialConfig {
   create: RawDefaultCreateConfig
   register: RawDefaultRegisterConfig
   remove: RawDefaultRemoveConfig
+  clean: RawDefaultCleanConfig
 }
 
 
@@ -73,4 +75,13 @@ export const getDefaultRegisterConfig = (partialRawConfig?: RawDefaultRegisterCo
 export const getDefaultRemoveConfig = (partialRawConfig?: RawDefaultRemoveConfig): DefaultRemoveConfig => {
   const rawConfig = _.cloneDeep(localRawConfig)
   return new DefaultRemoveConfig(rawConfig.remove, partialRawConfig)
+}
+
+
+/**
+ * 获取子命令 'clean' 的默认选项
+ */
+export const getDefaultCleanConfig = (partialRawConfig?: RawDefaultCleanConfig): DefaultCleanConfig => {
+  const rawConfig = _.cloneDeep(localRawConfig)
+  return new DefaultCleanConfig(rawConfig.clean, partialRawConfig)
 }

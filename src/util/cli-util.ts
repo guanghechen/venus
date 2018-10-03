@@ -61,3 +61,15 @@ export const doneWithClose = (fn: (...args: any[]) => Promise<void>) => (...args
     process.exit(0)
   })()
 }
+
+
+/**
+ * 收集可变参数的参数列表
+ *
+ * @param arg
+ * @param args
+ */
+export const collectOptionArgs = (arg: string, args: string[]) => {
+  args.push(arg)
+  return args
+}

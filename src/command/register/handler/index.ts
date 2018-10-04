@@ -62,10 +62,12 @@ export class RegisterHandler {
   }
 
   /**
-   * 删除源文件
+   * 注册源文件
    * @param absoluteSourcePath  源文件路径
    */
   private async doRegister(absoluteSourcePath: string) {
+    // 如果后缀名不会 '.cpp' 或 '.c' 则直接无视
+    if (path.extname(absoluteSourcePath) !== '.cpp' || path.extname(absoluteSourcePath) !== '.c') return
     const { projectRootDirectory, executeDirectory, cmakeLists } = this.resolvedGlobalConfig
     await register(cmakeLists.filepath, cmakeLists.encoding, executeDirectory, projectRootDirectory, absoluteSourcePath)
   }

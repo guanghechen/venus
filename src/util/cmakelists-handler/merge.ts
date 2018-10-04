@@ -60,5 +60,5 @@ export const merge = (cmakeLists: CMakeLists): string => {
     .concat(addCompileDefinitions)
     .concat('\n\n')
     .concat(addExecutables)
-    .concat('\n\n')
+    .concat('\n')
 }

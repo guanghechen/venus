@@ -101,7 +101,12 @@ const matchBlockComment = (content: string, start: number, bcSymbol: [string, st
     process.exit(-1)
   }
 
-  return { start, content: content.slice(start, end + bcSymbol[1].length) }
+  end += bcSymbol[1].length
+  // 试图匹配多余的空格和换行
+  while (end < content.length && /^[\t ]$/.test(content.charAt(end))) ++end
+  while (end < content.length && /^[\n]$/.test(content.charAt(end))) ++end
+
+  return { start, content: content.slice(start, end) }
 }
 
 

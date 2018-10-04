@@ -70,14 +70,14 @@ export const resolveDependencies = async (resolveDependencyPath: (dependencies: 
 
   // 按照依赖的拓扑序将代码拼接，并将源文件添加到末尾，使得生成的代码中出现在最下面
   localDependencies.push(absoluteSourcePath)
-  await Promise.all(localDependencies.map(async dependency => {
+  for (let dependency of localDependencies) {
     await ensureFileExist(dependency)
     const content = await fs.readFile(dependency, { encoding })
     const sourceItem = partition(content)
     namespaces.push(...sourceItem.namespaces)
     ; [...sourceItem.typedefs.entries()].forEach(([key, val]) => typedefs.set(key, val))
     result += merge({ ...sourceItem, dependencies: [] }).concat('\n')
-  }))
+  }
 
   const sourceItem = partition(result)
   namespaces.push(...sourceItem.namespaces)

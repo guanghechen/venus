@@ -1,4 +1,5 @@
 import fs from 'fs-extra'
+import path from 'path'
 import { DefaultRemoveConfig } from '@/config/remove'
 import { collectFiles, ensureExist, ensureFileExist, isDirectory, isFile } from '@/util/fs-util'
 import { coverBoolean } from '@/util/option-util'
@@ -76,6 +77,9 @@ export class RemoveHandler {
    * @param force               暴力删除，无需经过用户同意
    */
   private async doRemove(absoluteSourcePath: string, force: boolean) {
+    // 如果后缀名不会 '.cpp' 或 '.c' 则直接无视
+    if (path.extname(absoluteSourcePath) !== '.cpp' && path.extname(absoluteSourcePath) !== '.c') return
+
     const { projectRootDirectory, executeDirectory, cmakeLists } = this.resolvedGlobalConfig
 
     // 相对于执行命令所在的路径的相对路径，用于友好的提示

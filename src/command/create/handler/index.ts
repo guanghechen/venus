@@ -73,7 +73,8 @@ export class CreateHandler {
 
     // 插入数据
     if (resolvedConfig.data.active) {
-      const absoluteDataPath = path.resolve(path.dirname(absoluteSourcePath), resolvedConfig.data.filename)
+      const prefix = path.parse(absoluteSourcePath).name.split('-')[0]
+      const absoluteDataPath = path.resolve(path.dirname(absoluteSourcePath), `${prefix}-${resolvedConfig.data.filename}`)
       content = await handleData(projectRootDirectory, executeDirectory, absoluteSourcePath, absoluteDataPath, definitionPhase, content)
     }
 

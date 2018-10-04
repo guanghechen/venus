@@ -43,13 +43,15 @@ export const handleRemoveSpaces = (content: string): string => {
     .map(({ start, content }) => ({ start, content: removeCommonSpacesPrefix(content) }))
 
   const header = merge({
-    ...sourceItem,
     sources: [],
     literals: [],
     comments:[],
     macros: [],
+    dependencies: sourceItem.dependencies,
+    namespaces: sourceItem.namespaces,
     typedefs: new Map<string, string>(),
   }).trim()
+    .replace(/#include\s*/, '#include')
 
   const body = merge({
     ...sourceItem,

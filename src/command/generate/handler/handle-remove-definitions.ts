@@ -5,11 +5,11 @@
  * #else
  * #endif
  */
-const getDefinitionRegex = (flags?: string) => new RegExp(/#ifdef\s*?\w*\s*?\n\s*(?:#else)?\s*?\n#endif(\s*?)\n/, flags)
+const getDefinitionRegex = (flags?: string) => new RegExp(/#ifdef\s*?\w*\s*?\n\s*(?:#else)?\s*?\n#endif(\s*?)\n+/, flags)
 
 
 // 移除 freopen
 export const handleRemoveDefinition = (content: string): string => {
   const definitionRegex = getDefinitionRegex('g')
-  return content.replace(definitionRegex, '\n')
+  return content.replace(definitionRegex, '')
 }

@@ -42,7 +42,7 @@ export const merge = (sourceItem: SourceItem) => {
       if (x.length !== y.length) return x.length - y.length
       return x < y? -1: 1
     })
-    .map(dependency => `#include<${dependency}>`)
+    .map(dependency => `#include <${dependency}>`)
     .join('\n')
 
   const namespaceSet: Set<string> = new Set<string>()
@@ -70,4 +70,5 @@ export const merge = (sourceItem: SourceItem) => {
     .concat('\n\n\n')
     .concat(typedefs != null && typedefs.length > 0? typedefs + '\n\n': '')
     .concat(content.trim())
+    .concat('\n')
 }

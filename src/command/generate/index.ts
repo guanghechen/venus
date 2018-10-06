@@ -11,10 +11,12 @@ export default (program: commander.Command,
                 getGlobalConfig: (specifiedProjectLocatedPath?: string) => Promise<GlobalConfig>) => {
   program
     .command(`generate <source> [target]`)
+    .alias('g')
     .option(`-d, --output-directory <output-directory>`, `specify output directory, related with the project root directory where the CMakeLists.txt exists.`)
     .option(`--rc, --remove-comments`, `remove comments.`)
     .option(`--rs, --remove-spaces`, `remove spaces.`)
     .option(`--rf, --remove-freopen`, `remove freopen statements.`)
+    .option(`--ra, --remove-assert`, `remove assert statements.`)
     .option(`-u, --uglify`, `shortcut of --rc --rs.`)
     .option(`-c, --copy`, `copy to system clipboard, this option will invalidate the output options: '-f', -d' and '-p'.`)
     .option(`-f, --force`, `if the target file is exists, overwrite it without confirmation.`)

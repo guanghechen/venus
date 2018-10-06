@@ -9,6 +9,7 @@ import loadCreateCommand from './create'
 import loadRegisterCommand from './register'
 import loadRemoveCommand from './remove'
 import loadCleanCommand from './clean'
+import { logger } from '@/util/logger'
 
 
 export interface GlobalConfig {
@@ -44,6 +45,13 @@ export default (program: commander.Command) => {
 
   // 挂载 clean 子命令
   loadCleanCommand(program, getRawPartialConfig('clean'), getGlobalConfig)
+
+  program
+    .command('*')
+    .action(() => {
+      logger.error('unknown command.')
+      process.exit(-1)
+    })
 
   /**
    * 获取外部配置文件

@@ -12,6 +12,7 @@ import { handleRemoveFreopen } from './handle-remove-freopens'
 import { handleCopy } from './handle-copy'
 import { handleSave } from './handle-save'
 import { handleRemoveDefinition } from './handle-remove-definitions'
+import { handleRemoveAsserts } from '@/command/generate/handler/handle-remove-asserts'
 
 
 interface GenerateArgument {
@@ -24,6 +25,7 @@ interface GenerateOption {
   readonly removeComments?: boolean
   readonly removeSpaces?: boolean
   readonly removeFreopen?: boolean
+  readonly removeAssert?: boolean
   readonly uglify?: boolean
   readonly force?: boolean
   readonly copy?: boolean
@@ -35,6 +37,7 @@ export interface GenerateConfig {
   readonly removeComments: boolean
   readonly removeSpaces: boolean
   readonly removeFreopen: boolean
+  readonly removeAssert: boolean
   readonly force: boolean
   readonly copy: boolean
   readonly absoluteSourcePath: string
@@ -81,6 +84,11 @@ export class GenerateHandler {
       content = handleRemoveDefinition(content)
     }
 
+    // 移除 assert
+    if (resolvedConfig.removeAssert) {
+      content = handleRemoveAsserts(content)
+    }
+
     // 压缩
     if (resolvedConfig.removeComments) content = handleRemoveComments(content)
     if (resolvedConfig.removeSpaces) content = handleRemoveSpaces(content)
@@ -117,6 +125,7 @@ export class GenerateHandler {
       removeComments: coverBoolean(defaultConfig.removeComments, option.removeComments) || !!option.uglify,
       removeSpaces: coverBoolean(defaultConfig.removeSpaces, option.removeSpaces) || !!option.uglify,
       removeFreopen: coverBoolean(defaultConfig.removeFreopen, option.removeFreopen),
+      removeAssert: coverBoolean(defaultConfig.removeAssert, option.removeAssert),
       force: coverBoolean(defaultConfig.force, option.force),
       copy: coverBoolean(defaultConfig.copy, option.copy),
       absoluteSourcePath,

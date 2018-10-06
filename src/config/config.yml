@@ -3,6 +3,7 @@ generate:
   remove-spaces: false
   remove-comments: false
   remove-freopen: false
+  remove-assert: false
   force: false
   copy: false
 

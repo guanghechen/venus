@@ -11,6 +11,7 @@ export default (program: commander.Command,
                 getGlobalConfig: (specifiedProjectLocatedPath?: string) => Promise<GlobalConfig>) => {
   program
     .command(`generate <source> [target]`)
+    .alias('g')
     .option(`-d, --output-directory <output-directory>`, `specify output directory, related with the project root directory where the CMakeLists.txt exists.`)
     .option(`--rc, --remove-comments`, `remove comments.`)
     .option(`--rs, --remove-spaces`, `remove spaces.`)

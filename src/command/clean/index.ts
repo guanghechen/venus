@@ -11,6 +11,7 @@ export default (program: commander.Command,
                 getGlobalConfig: (specifiedProjectLocatedPath?: string) => Promise<GlobalConfig>) => {
   program
     .command(`clean [directory]`)
+    .alias('c')
     .option(`-r, --recursive`, `remove all files in the directory recursively.`)
     .option(`-f, --force`, `clean file without confirmation.`)
     .option(`-p, --pattern <pattern>`, `clean file which should matched the pattern.`, collectOptionArgs, [])

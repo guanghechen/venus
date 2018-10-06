@@ -12,6 +12,7 @@ export default (program: commander.Command,
                 getGlobalConfig: (specifiedProjectLocatedPath?: string) => Promise<GlobalConfig>) => {
   program
     .command(`register <source...>`)
+    .alias('r')
     .option(`-r, --recursive`, `register all files in the directory recursively.`)
     .action(async (sourcePaths: string[], option) => {
       const sourcePathSet: Set<string> = new Set<string>()

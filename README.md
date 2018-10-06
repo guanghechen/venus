@@ -17,7 +17,6 @@ npm install -g venus-acm
 # 使用
 执行 `venus --help` 可以看到命令的用法：
 ```shell
-
   Usage: main [options] [command]
 
 
@@ -35,11 +34,12 @@ npm install -g venus-acm
 
   Commands:
 
-    generate [options] <source> [target]
+    generate|g [options] <source> [target]
     create|new [options] [source...]
-    register [options] <source...>
-    remove [options] <source...>
-    clean [options] [directory]
+    register|r [options] <source...>
+    remove|d [options] <source...>
+    clean|c [options] [directory]
+    *
 ```
 
 其中 `Commands` 下方的是子命令，见下文；同时，需要注意的是，你可以通过在工程根目录下指定一个 `venus.config.yml` 来定义命令选项的默认值，见 [demo](https://github.com/lemon-clown/venus/blob/master/demo/venus.config.yml)
@@ -58,7 +58,7 @@ npm install -g venus-acm
 # 子命令 generate
 执行 `venus generate --help` 可以看到 `generate` 的用法：
 ```shell
-  Usage: generate [options] <source> [target]
+  Usage: generate|g [options] <source> [target]
 
 
   Options:
@@ -67,6 +67,7 @@ npm install -g venus-acm
     --rc, --remove-comments                    remove comments.
     --rs, --remove-spaces                      remove spaces.
     --rf, --remove-freopen                     remove freopen statements.
+    --ra, --remove-assert                      remove assert statements.
     -u, --uglify                               shortcut of --rc --rs.
     -c, --copy                                 copy to system clipboard, this option will invalidate the output options: '-f', -d' and '-p'.
     -f, --force                                if the target file is exists, overwrite it without confirmation.
@@ -80,6 +81,7 @@ npm install -g venus-acm
 * `--remove-comments`: 删除源码中所有的注释（请放心使用，它不会删除正常的输出中的形如 `printf("/*  */")` 的代码）
 * `--remove-spaces`: 删除源码中所有多余的空格（请放心使用，它不会删除正常的输出中的形如 `printf("  ")` 的代码）
 * `--remove-freopen`: 删除源码中的 freopen 代码
+* `--remove-assert`: 删除源码中的 assert 代码
 * `--uglify`: 相当于同时指定 `--remove-comments` 和 `--remove-spaces`
 * `--copy`: 不将打包后的内容输出的文件，而是输出到系统剪切板中，若指定该选项，则 `--outputDirectory` 和 `target` 都将失效
 * `--force`: 当输出文件已存在时，会在命令行中发起一个确认删除的交互，若指定该选项，则将无需确认就覆盖掉文件
@@ -118,7 +120,7 @@ npm install -g venus-acm
 # 子命令 register
 执行 `venus register --help` 可以看到 `register` 的用法：
 ```shell
-  Usage: register [options] <source...>
+  Usage: register|r [options] <source...>
 
 
   Options:
@@ -136,7 +138,7 @@ npm install -g venus-acm
 # 子命令 remove
 执行 `venus remove --help` 可以看到 `remove` 的用法：
 ```shell
-  Usage: remove [options] <source...>
+  Usage: remove|d [options] <source...>
 
 
   Options:
@@ -156,7 +158,7 @@ npm install -g venus-acm
 # 子命令 clean
 执行 `venus clean --help` 可以看到 `clean` 的用法：
 ```shell
-  Usage: clean [options] [directory]
+  Usage: clean|c [options] [directory]
 
 
   Options:

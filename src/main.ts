@@ -1,4 +1,5 @@
 import program from 'commander'
+import { logger } from '@/util/logger'
 import { doneWithClose } from '@/util/cli-util'
 import loadCommand from '@/command'
 import manifest from '../package.json'
@@ -16,8 +17,8 @@ import manifest from '../package.json'
 
 program
   .version(manifest.version)
-  .option('--log-level <level>', 'index logger\'s level.')
-  .option('--log-option <option>', 'index logger\' option. (date,colorful)')
+
+logger.registerToCommander(program)
 
 loadCommand(program)
 

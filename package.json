@@ -1,6 +1,6 @@
 {
   "name": "venus-acm",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "author": "lemonclown",
   "description": "build cpp codes into single sources file.",
   "bin": {
@@ -36,11 +36,11 @@
     "@types/lodash": "^4.14.116",
     "@types/minimatch": "^3.0.3",
     "@types/node": "^10.9.4",
-    "colorful-chalk-logger": "^0.3.1",
+    "colorful-chalk-logger": "^0.3.2",
     "fs-extra": "^7.0.0",
     "js-yaml": "^3.12.0",
     "lodash": "^4.17.11",
-    "mini-copy": "^0.1.2",
+    "mini-copy": "^0.1.3",
     "minimatch": "^3.0.4"
   }
 }

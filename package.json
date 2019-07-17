@@ -1,13 +1,14 @@
 {
   "name": "venus-acm",
   "version": "1.1.11",
-  "author": "lemonclown",
+  "author": "lemon-clown",
   "description": "build cpp codes into single sources file.",
   "bin": {
     "venus": "target/main.js"
   },
   "scripts": {
-    "build": "ts-node -r tsconfig-paths/register script/build.ts"
+    "build": "ts-node -r tsconfig-paths/register script/build.ts",
+    "prepublishOnly": "yarn build"
   },
   "main": "target/main.js",
   "repository": "git@github.com:lemon-clown/venus.git",

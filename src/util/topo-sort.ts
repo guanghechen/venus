@@ -3,17 +3,20 @@ export interface TopoNode {
   children: TopoNode[]
 }
 
-
 /**
  * calc degree of nodes.
  * @param node
  * @param du
  * @param nodeMap
  */
-function calcDu(node: TopoNode, du: Map<string, number>, nodeMap: Map<string, TopoNode>) {
+function calcDu(
+  node: TopoNode,
+  du: Map<string, number>,
+  nodeMap: Map<string, TopoNode>,
+): void {
   if (node == null) return
   nodeMap.set(node.value, node)
-  for (let o of node.children) {
+  for (const o of node.children) {
     if (du.has(o.value)) du.set(o.value, du.get(o.value)! + 1)
     else {
       du.set(o.value, 1)
@@ -21,7 +24,6 @@ function calcDu(node: TopoNode, du: Map<string, number>, nodeMap: Map<string, To
     }
   }
 }
-
 
 /**
  * topo sort
@@ -35,15 +37,15 @@ export function toposort(node: TopoNode): string[] {
 
   calcDu(node, du, nodeMap)
   du.set(node.value, 0)
-  for (let [key, val] of du.entries()) {
+  for (const [key, val] of du.entries()) {
     if (val === 0) q.push(key)
   }
 
   while (q.length > 0) {
-    let x: string = q.shift()!
+    const x: string = q.shift()!
     values.push(x)
-    let u: TopoNode = nodeMap.get(x)!
-    for (let v of u.children) {
+    const u: TopoNode = nodeMap.get(x)!
+    for (const v of u.children) {
       du.set(v.value, du.get(v.value)! - 1)
       if (du.get(v.value) == 0) q.push(v.value)
     }

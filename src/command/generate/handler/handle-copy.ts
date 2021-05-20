@@ -1,7 +1,6 @@
 import { copy } from '@/util/copy-paste'
 import { logger } from '@/util/logger'
 
-
 // 将内容复制到系统剪切板
 export const handleCopy = async (content: string): Promise<void> => {
   try {

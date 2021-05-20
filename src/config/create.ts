@@ -1,5 +1,9 @@
-import { coverBoolean, coverString, coverObject, coverInteger } from '@/util/option-util'
-
+import {
+  coverBoolean,
+  coverInteger,
+  coverObject,
+  coverString,
+} from '@guanghechen/option-helper'
 
 /**
  * 配置文件的参数名
@@ -30,14 +34,18 @@ export interface RawDefaultCreateConfig {
     readonly encoding: string
     readonly filename: string
   }
-  readonly categories: {
-    readonly [phrase: string]: {
-      readonly dirname: string
-      readonly 'problem-number': number
-    }
-  }[]
+  readonly categories: Array<
+    Readonly<
+      Record<
+        string,
+        {
+          readonly dirname: string
+          readonly 'problem-number': number
+        }
+      >
+    >
+  >
 }
-
 
 /**
  * 子命令 'create/new' 的默认选项
@@ -68,20 +76,26 @@ export class DefaultCreateConfig {
     readonly encoding: string
     readonly filename: string
   }
-  public readonly categories: {
-    readonly [phrase: string]: {
-      dirname: string
-      problemNumber: number
-    }
-  }
+  public readonly categories: Readonly<
+    Record<
+      string,
+      {
+        dirname: string
+        problemNumber: number
+      }
+    >
+  >
 
-  public constructor(rawConfig: RawDefaultCreateConfig, partialRawConfig?: RawDefaultCreateConfig) {
+  constructor(
+    rawConfig: RawDefaultCreateConfig,
+    partialRawConfig?: RawDefaultCreateConfig,
+  ) {
     const { template, data, categories } = rawConfig
     const {
       template: pTemplate = {} as any,
       data: pData = {} as any,
       categories: pCategories,
-    } = partialRawConfig || {} as RawDefaultCreateConfig
+    } = partialRawConfig ?? {}
 
     this.template = {
       active: coverBoolean(template.active, pTemplate.active),
@@ -95,15 +109,19 @@ export class DefaultCreateConfig {
       filename: coverString(data.filename, pData.filename),
     }
 
-    let resolvedCategories = coverObject(categories, pCategories)
-    this.categories = Object.getOwnPropertyNames(resolvedCategories)
-      .reduce((result, c) => ({
+    const resolvedCategories = coverObject(categories, pCategories)
+    this.categories = Object.getOwnPropertyNames(resolvedCategories).reduce(
+      (result, c) => ({
         ...result,
         [c]: {
           dirname: resolvedCategories[c].dirname,
-          problemNumber: coverInteger(0, resolvedCategories[c]['problem-number']),
-        }
-      }), {})
+          problemNumber: coverInteger(
+            0,
+            resolvedCategories[c]['problem-number'],
+          ),
+        },
+      }),
+      {},
+    )
   }
 }
-

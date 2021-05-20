@@ -1,20 +1,18 @@
+import { yesOrNo } from '@/util/cli-util'
+import { register } from '@/util/cmakelists-handler/register'
+import { logger } from '@/util/logger'
+import { relativePath } from '@/util/path-util'
+import { coverBoolean, coverString } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
 import path from 'path'
-import { logger } from '@/util/logger'
-import { yesOrNo } from '@/util/cli-util'
-import { relativePath } from '@/util/path-util'
-import { coverBoolean, coverString } from '@/util/option-util'
-import { register } from '@/util/cmakelists-handler/register'
-import { DefaultCreateConfig } from '@/config/create'
-import { GlobalConfig } from '@/command'
-import { handleTemplate } from './handle-template'
+import type { GlobalConfig } from '@/command'
+import type { DefaultCreateConfig } from '@/config/create'
 import { handleData } from './handle-data'
-
+import { handleTemplate } from './handle-template'
 
 interface CreateArgument {
   readonly absoluteSourcePath: string
 }
-
 
 interface CreateOption {
   readonly template?: boolean
@@ -22,7 +20,6 @@ interface CreateOption {
   readonly data?: boolean
   readonly dataPath?: string
 }
-
 
 export interface CreateConfig {
   readonly absoluteSourcePath: string
@@ -38,44 +35,68 @@ export interface CreateConfig {
   }
 }
 
-
 export class CreateHandler {
   private readonly config: Promise<CreateConfig>
   private readonly resolvedGlobalConfig: GlobalConfig
 
-  constructor(argument: CreateArgument,
-              option: CreateOption,
-              resolvedGlobalConfig: GlobalConfig,
-              defaultConfig: DefaultCreateConfig) {
+  constructor(
+    argument: CreateArgument,
+    option: CreateOption,
+    resolvedGlobalConfig: GlobalConfig,
+    defaultConfig: DefaultCreateConfig,
+  ) {
     this.resolvedGlobalConfig = resolvedGlobalConfig
     this.config = this.preprocess(argument, option, defaultConfig)
   }
 
-  public async handle() {
-    const { executeDirectory, projectRootDirectory, definitionPhase, cmakeLists, encoding } = this.resolvedGlobalConfig
+  public async handle(): Promise<void> {
+    const {
+      executeDirectory,
+      projectRootDirectory,
+      definitionPhase,
+      cmakeLists,
+      encoding,
+    } = this.resolvedGlobalConfig
     const resolvedConfig = await this.config
 
     const absoluteSourcePath = resolvedConfig.absoluteSourcePath
-    const relativeSourcePath = relativePath(executeDirectory, absoluteSourcePath, projectRootDirectory)
+    const relativeSourcePath = relativePath(
+      executeDirectory,
+      absoluteSourcePath,
+      projectRootDirectory,
+    )
 
     // 确保源文件不存在
     if (fs.existsSync(absoluteSourcePath)) {
-      let confirm: boolean = await yesOrNo(`overwrite ${relativeSourcePath}`)
+      const confirm: boolean = await yesOrNo(`overwrite ${relativeSourcePath}`)
       if (!confirm) return
     }
 
-    let content: string = ''
+    let content = ''
 
     // 获取模板
     if (resolvedConfig.template.active) {
-      content = await handleTemplate(resolvedConfig.template.filepath, resolvedConfig.template.encoding)
+      content = await handleTemplate(
+        resolvedConfig.template.filepath,
+        resolvedConfig.template.encoding,
+      )
     }
 
     // 插入数据
     if (resolvedConfig.data.active) {
       const prefix = path.parse(absoluteSourcePath).name.split('-')[0]
-      const absoluteDataPath = path.resolve(path.dirname(absoluteSourcePath), `${prefix}-${resolvedConfig.data.filename}`)
-      content = await handleData(projectRootDirectory, executeDirectory, absoluteSourcePath, absoluteDataPath, definitionPhase, content)
+      const absoluteDataPath = path.resolve(
+        path.dirname(absoluteSourcePath),
+        `${prefix}-${resolvedConfig.data.filename}`,
+      )
+      content = await handleData(
+        projectRootDirectory,
+        executeDirectory,
+        absoluteSourcePath,
+        absoluteDataPath,
+        definitionPhase,
+        content,
+      )
     }
 
     // 写入文件
@@ -83,7 +104,13 @@ export class CreateHandler {
     logger.info(`written into ${relativeSourcePath}.`)
 
     // 注册进 CmakeLists.txt 中
-    await register(cmakeLists.filepath, cmakeLists.encoding, executeDirectory, projectRootDirectory, absoluteSourcePath)
+    await register(
+      cmakeLists.filepath,
+      cmakeLists.encoding,
+      executeDirectory,
+      projectRootDirectory,
+      absoluteSourcePath,
+    )
   }
 
   /**
@@ -93,22 +120,30 @@ export class CreateHandler {
    * @param option          命令的选项
    * @param defaultConfig   默认配置
    */
-  private async preprocess(argument: CreateArgument,
-                           option: CreateOption,
-                           defaultConfig: DefaultCreateConfig): Promise<CreateConfig> {
+  private async preprocess(
+    argument: CreateArgument,
+    option: CreateOption,
+    defaultConfig: DefaultCreateConfig,
+  ): Promise<CreateConfig> {
     const { projectRootDirectory } = this.resolvedGlobalConfig
     return {
       absoluteSourcePath: argument.absoluteSourcePath,
       template: {
         active: coverBoolean(defaultConfig.template.active, option.template),
-        filepath: path.resolve(projectRootDirectory, coverString(defaultConfig.template.filename, option.templatePath)),
+        filepath: path.resolve(
+          projectRootDirectory,
+          coverString(defaultConfig.template.filename, option.templatePath),
+        ),
         encoding: defaultConfig.template.encoding,
       },
       data: {
         active: coverBoolean(defaultConfig.data.active, option.data),
         filename: path.relative(
           projectRootDirectory,
-          path.resolve(projectRootDirectory, coverString(defaultConfig.data.filename, option.dataPath))
+          path.resolve(
+            projectRootDirectory,
+            coverString(defaultConfig.data.filename, option.dataPath),
+          ),
         ),
         encoding: defaultConfig.data.encoding,
       },

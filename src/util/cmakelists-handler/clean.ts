@@ -1,10 +1,9 @@
+import { ensureFileExist, isFile } from '@/util/fs-util'
+import { logger } from '@/util/logger'
 import fs from 'fs-extra'
 import path from 'path'
-import { logger } from '@/util/logger'
-import { ensureFileExist, isFile } from '@/util/fs-util'
-import { partition } from './partition'
 import { merge } from './merge'
-
+import { partition } from './partition'
 
 /**
  * 清空 CMakeLists.txt 中无效的 add_executable 条目
@@ -13,9 +12,11 @@ import { merge } from './merge'
  * @param cmakeEncoding
  * @param projectRootDirectory
  */
-export const clean = async (cmakeListsPath: string,
-                             cmakeEncoding: string,
-                             projectRootDirectory: string): Promise<void> => {
+export const clean = async (
+  cmakeListsPath: string,
+  cmakeEncoding: string,
+  projectRootDirectory: string,
+): Promise<void> => {
   // 确保 CMakeLists.txt 存在
   await ensureFileExist(cmakeListsPath, 'bad cmake-lists file:')
   let content = await fs.readFile(cmakeListsPath, { encoding: cmakeEncoding })
@@ -24,10 +25,10 @@ export const clean = async (cmakeListsPath: string,
   const { executables } = cmakeLists
 
   const entries = [...executables.entries()]
-  for (let [key, val] of entries) {
+  for (const [key, val] of entries) {
     // 如果源文件已经不存在了，则清除条目
     const absoluteSourcePath = path.resolve(projectRootDirectory, val)
-    if (!await isFile(absoluteSourcePath)) {
+    if (!(await isFile(absoluteSourcePath))) {
       executables.delete(key)
     }
   }
@@ -35,6 +36,7 @@ export const clean = async (cmakeListsPath: string,
   // 写进 CMakeLists.txt 中
   content = merge({ ...cmakeLists, executables })
   await fs.writeFile(cmakeListsPath, content, cmakeEncoding)
-  logger.verbose(`cleaned from ${path.relative(projectRootDirectory, cmakeListsPath)}.`)
+  logger.verbose(
+    `cleaned from ${path.relative(projectRootDirectory, cmakeListsPath)}.`,
+  )
 }
-

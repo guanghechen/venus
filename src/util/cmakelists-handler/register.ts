@@ -1,11 +1,10 @@
-import fs from 'fs-extra'
-import path from 'path'
+import { ensureFileExist } from '@/util/fs-util'
 import { logger } from '@/util/logger'
 import { relativePath } from '@/util/path-util'
-import { ensureFileExist } from '@/util/fs-util'
+import fs from 'fs-extra'
+import path from 'path'
 import { merge } from './merge'
 import { partition } from './partition'
-
 
 /**
  * 生成一个目标文件的文件名
@@ -14,7 +13,8 @@ import { partition } from './partition'
  */
 const generateExecutableTargetName = (relativeSourcePath: string): string => {
   const { dir: dirname, name: filename } = path.parse(relativeSourcePath)
-  const name: string = dirname.split(/[\\/]+/g)
+  const name: string = dirname
+    .split(/[\\/]+/g)
     .filter(p => !/^\s*$/.test(p))
     .slice(1)
     .join('-')
@@ -22,7 +22,6 @@ const generateExecutableTargetName = (relativeSourcePath: string): string => {
   if (/^\d+/.test(filename)) return `${name}${filename}`
   return `${name}-${filename}`
 }
-
 
 /**
  * 往 CMakeLists.txt 中添加 target
@@ -34,12 +33,14 @@ const generateExecutableTargetName = (relativeSourcePath: string): string => {
  * @param absoluteSourcePath
  * @param targetName
  */
-export const register = async (cmakeListsPath: string,
-                               cmakeEncoding: string,
-                               executeDirectory: string,
-                               projectRootDirectory: string,
-                               absoluteSourcePath: string,
-                               targetName?: string): Promise<boolean> => {
+export const register = async (
+  cmakeListsPath: string,
+  cmakeEncoding: string,
+  executeDirectory: string,
+  projectRootDirectory: string,
+  absoluteSourcePath: string,
+  targetName?: string,
+): Promise<boolean> => {
   // 确保 CMakeLists.txt 存在
   await ensureFileExist(cmakeListsPath, 'bad cmake-lists file:')
   let content = await fs.readFile(cmakeListsPath, { encoding: cmakeEncoding })
@@ -51,15 +52,18 @@ export const register = async (cmakeListsPath: string,
   if (!executables.has(targetPath)) {
     // 如果 targetName 未指定或未空字符串，则生成一个名字
     if (targetName == null || targetName.length < 0)
+      // eslint-disable-next-line no-param-reassign
       targetName = await generateExecutableTargetName(targetPath)
 
     // 如果 targetName 已经存在，则在末尾加序号
     if (executables.has(targetName)) {
       for (let code = 1; ; ++code) {
-        let newTargetName = targetName.indexOf('.') === -1
-          ? `${targetName}-${code}`
-          : targetName.replace(/\./, `-${code}.`)
+        const newTargetName =
+          targetName.indexOf('.') === -1
+            ? `${targetName}-${code}`
+            : targetName.replace(/\./, `-${code}.`)
         if (executables.has(newTargetName)) continue
+        // eslint-disable-next-line no-param-reassign
         targetName = newTargetName
         break
       }
@@ -74,8 +78,15 @@ export const register = async (cmakeListsPath: string,
   await fs.writeFile(cmakeListsPath, content, cmakeEncoding)
 
   // 相对于执行命令所在的路径的相对路径，用于友好的提示
-  const relativeCMakeListsPath = relativePath(projectRootDirectory, cmakeListsPath)
-  const relativeSourcePath = relativePath(executeDirectory, absoluteSourcePath, projectRootDirectory)
+  const relativeCMakeListsPath = relativePath(
+    projectRootDirectory,
+    cmakeListsPath,
+  )
+  const relativeSourcePath = relativePath(
+    executeDirectory,
+    absoluteSourcePath,
+    projectRootDirectory,
+  )
   logger.debug(`registered ${relativeSourcePath} to ${relativeCMakeListsPath}.`)
   return true
 }

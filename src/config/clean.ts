@@ -1,5 +1,4 @@
-import { coverArray, coverBoolean } from '@/util/option-util'
-
+import { coverArray, coverBoolean } from '@guanghechen/option-helper'
 
 /**
  * 配置文件的参数名
@@ -14,7 +13,6 @@ export interface RawDefaultCleanConfig {
   readonly patterns: string[]
 }
 
-
 /**
  * 子命令 'clean' 的默认选项
  *
@@ -24,9 +22,16 @@ export class DefaultCleanConfig {
   public readonly recursive: boolean
   public readonly patterns: string[]
 
-  public constructor(rawConfig: RawDefaultCleanConfig, partialRawConfig?: RawDefaultCleanConfig) {
+  constructor(
+    rawConfig: RawDefaultCleanConfig,
+    partialRawConfig?: RawDefaultCleanConfig,
+  ) {
     const { force, recursive, patterns } = rawConfig
-    const { force: pForce, recursive: pRecursive, patterns: pPatterns } = partialRawConfig || {} as RawDefaultCleanConfig
+    const {
+      force: pForce,
+      recursive: pRecursive,
+      patterns: pPatterns,
+    } = partialRawConfig ?? {}
     this.force = coverBoolean(force, pForce)
     this.recursive = coverBoolean(recursive, pRecursive)
     this.patterns = coverArray(patterns, pPatterns)

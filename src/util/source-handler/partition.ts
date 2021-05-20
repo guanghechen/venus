@@ -1,42 +1,49 @@
-import { logger } from '@/util/logger'
 import { languageConfig } from '@/config/immutable'
-import { SourceItem, SourcePiece } from './index'
-
+import { logger } from '@/util/logger'
+import type { SourceItem, SourcePiece } from './types'
 
 /**
  * 获取依赖列表
  */
-const getImportRegex = (flags?: string) => new RegExp(/#include\s*[<"]([\w\-_.:\/\\]+)[>"]\s*?\n/, flags)
-
+const getImportRegex = (flags?: string): RegExp =>
+  new RegExp(/#include\s*[<"]([\w\-_.:/\\]+)[>"]\s*?\n/, flags)
 
 /**
  * 获取命令空间列表
  */
-const getNamespaceRegex = (flags?: string) => new RegExp(/using\s+namespace\s+(\w+)\s*;\s*/, flags)
-
+const getNamespaceRegex = (flags?: string): RegExp =>
+  new RegExp(/using\s+namespace\s+(\w+)\s*;\s*/, flags)
 
 /**
  * 获取类型别名列表
  */
-const getTypedefRegex = (flags?: string) => new RegExp(/typedef\s+([\w* <>]+)\s+(\w+)\s*;\s*/, flags)
-
+const getTypedefRegex = (flags?: string): RegExp =>
+  new RegExp(/typedef\s+([\w* <>]+)\s+(\w+)\s*;\s*/, flags)
 
 /**
  * 从指定位置开始匹配一个宏
  *
  * @param content   源码
- * @param start     起始的位置
+ * @param _start    起始的位置
  */
-const matchMacro = (content: string, start: number): SourcePiece => {
-  // 保留左侧的空格
-  while (start > 0 && /^[\t ]$/.test(content.charAt(start-1))) --start
+const matchMacro = (content: string, _start: number): SourcePiece => {
+  let start = _start
+
+  // Preserve the preceding whitespaces
+  for (; start > 0; --start) {
+    if (!/^[\t ]$/.test(content.charAt(start - 1))) break
+  }
+
   let end = start + 1
   for (; end < content.length; ++end) {
     const letter = content.charAt(end)
     if (letter != '\\' && letter !== '\n') continue
-    if (letter == '\n') break
-    for (++end; end < content.length && /^\s$/.test(content.charAt(end));) ++end
-    --end
+    if (letter === '\n') break
+
+    for (end += 1; end < content.length; ++end) {
+      if (/[\S]/.test(content.charAt(end))) break
+    }
+    end -= 1
   }
   return { start, content: content.slice(start, end + 1) }
 }
@@ -49,12 +56,12 @@ const matchMacro = (content: string, start: number): SourcePiece => {
  */
 const matchLiteral = (content: string, start: number): SourcePiece => {
   let end = start + 1
-  let quote = content.charAt(start)
+  const quote = content.charAt(start)
   for (; end < content.length; ++end) {
     const letter = content.charAt(end)
     if (letter !== '\\' && letter !== quote) continue
     if (letter === quote) break
-    ++end   // 如果碰到反斜杠，则再吃一个字符
+    end += 1 // 如果碰到反斜杠，则再吃一个字符
   }
 
   // 引号没有结束
@@ -66,7 +73,6 @@ const matchLiteral = (content: string, start: number): SourcePiece => {
   return { start, content: content.slice(start, end + 1) }
 }
 
-
 /**
  * 从指定位置开始匹配一段行内注释
  *
@@ -74,13 +80,19 @@ const matchLiteral = (content: string, start: number): SourcePiece => {
  * @param start     起始位置
  * @param lcSymbol  行内注释符
  */
-const matchLineComment = (content: string, start: number, lcSymbol: string): SourcePiece => {
+const matchLineComment = (
+  content: string,
+  start: number,
+  lcSymbol: string,
+): SourcePiece => {
   let end = start + lcSymbol.length
-  while (end < content.length && content.charAt(end) !== '\n') ++end
+  for (; end < content.length; ++end) {
+    if (content.charAt(end) === '\n') break
+  }
+
   // 即使没有换行符，到了行末了也相当于注释结尾
   return { start, content: content.slice(start, end) }
 }
-
 
 /**
  * 从指定位置开始匹配一段块注释
@@ -89,11 +101,22 @@ const matchLineComment = (content: string, start: number, lcSymbol: string): Sou
  * @param start     起始位置
  * @param bcSymbol  块注释符
  */
-const matchBlockComment = (content: string, start: number, bcSymbol: [string, string]): SourcePiece => {
-  // 保留左侧的空格
-  while (start > 0 && /^[\t ]$/.test(content.charAt(start-1))) --start
+const matchBlockComment = (
+  content: string,
+  _start: number,
+  bcSymbol: [string, string],
+): SourcePiece => {
+  let start = _start
+
+  // Preserve the preceding whitespaces
+  for (; start > 0; --start) {
+    if (!/^[\t ]$/.test(content.charAt(start - 1))) break
+  }
+
   let end = start + bcSymbol[0].length
-  while (end < content.length && !content.startsWith(bcSymbol[1], end)) ++end
+  for (; end < content.length; ++end) {
+    if (content.startsWith(bcSymbol[1], end)) break
+  }
 
   // 块注释没有结束
   if (end >= content.length) {
@@ -102,13 +125,13 @@ const matchBlockComment = (content: string, start: number, bcSymbol: [string, st
   }
 
   end += bcSymbol[1].length
-  // 试图匹配多余的空格和换行
-  while (end < content.length && /^[\t ]$/.test(content.charAt(end))) ++end
-  while (end < content.length && /^[\n]$/.test(content.charAt(end))) ++end
 
+  // Try to match the remaining whitespaces
+  for (; end < content.length; ++end) {
+    if (!/[\s]/.test(content.charAt(end))) break
+  }
   return { start, content: content.slice(start, end) }
 }
-
 
 /**
  * 通过注释切割、划分源码
@@ -116,7 +139,8 @@ const matchBlockComment = (content: string, start: number, bcSymbol: [string, st
  * @return {@link SourceItems}
  */
 export const partition = (content: string): SourceItem => {
-  const { macroMark, quoteMark, inlineCommentMark, blockCommentMark } = languageConfig
+  const { macroMark, quoteMark, inlineCommentMark, blockCommentMark } =
+    languageConfig
   const macros: SourcePiece[] = []
   const sources: SourcePiece[] = []
   const comments: SourcePiece[] = []
@@ -126,7 +150,7 @@ export const partition = (content: string): SourceItem => {
   const typedefs: Map<string, string> = new Map<string, string>()
 
   let lastIndex = 0
-  for (let i=lastIndex; i < content.length; ++i) {
+  for (let i = lastIndex; i < content.length; ++i) {
     let sourcePiece: SourcePiece | null = null
 
     // 匹配宏
@@ -137,8 +161,8 @@ export const partition = (content: string): SourceItem => {
 
     // 匹配明文字符串
     if (sourcePiece == null) {
-      for(let quote of quoteMark) {
-        if( content.startsWith(quote, i) ) {
+      for (const quote of quoteMark) {
+        if (content.startsWith(quote, i)) {
           sourcePiece = matchLiteral(content, i)
           literals.push(sourcePiece)
         }
@@ -158,7 +182,10 @@ export const partition = (content: string): SourceItem => {
     }
 
     if (sourcePiece == null) continue
-    sources.push({ start: lastIndex, content: content.slice(lastIndex, sourcePiece.start)})
+    sources.push({
+      start: lastIndex,
+      content: content.slice(lastIndex, sourcePiece.start),
+    })
     lastIndex = sourcePiece.start + sourcePiece.content.length
     i = lastIndex - 1
   }
@@ -168,36 +195,49 @@ export const partition = (content: string): SourceItem => {
 
   // 获取依赖
   macros.forEach(macro => {
-    macro.content = macro.content.replace(getImportRegex('g'), (match: string, dependency: string) => {
-      dependencies.push(dependency)
-      return ''
-    })
+    // eslint-disable-next-line no-param-reassign
+    macro.content = macro.content.replace(
+      getImportRegex('g'),
+      (match: string, dependency: string) => {
+        dependencies.push(dependency)
+        return ''
+      },
+    )
   })
 
   // 获取命令空间
   sources.forEach(source => {
-    source.content = source.content.replace(getNamespaceRegex('g'), (match: string, ns: string) => {
-      namespaces.push(ns)
-      return ''
-    })
+    // eslint-disable-next-line no-param-reassign
+    source.content = source.content.replace(
+      getNamespaceRegex('g'),
+      (match: string, ns: string) => {
+        namespaces.push(ns)
+        return ''
+      },
+    )
   })
 
   // 获取 typedef
   sources.forEach(source => {
-    source.content = source.content.replace(getTypedefRegex('g'), (match: string, raw: string, alias: string) => {
-      typedefs.set(alias, raw)
-      return ''
-    })
+    // eslint-disable-next-line no-param-reassign
+    source.content = source.content.replace(
+      getTypedefRegex('g'),
+      (match: string, raw: string, alias: string) => {
+        typedefs.set(alias, raw)
+        return ''
+      },
+    )
   })
 
-  const filterNotEmptyPiece = (sourcePiece: SourcePiece) => sourcePiece.content.length > 0
+  const isNotEmptyPiece = (sourcePiece: SourcePiece): boolean =>
+    sourcePiece.content.length > 0
 
   return {
     macros,
-    sources: sources.filter(filterNotEmptyPiece),
-    comments: comments.filter(filterNotEmptyPiece),
-    literals: literals.filter(filterNotEmptyPiece),
-    dependencies: [ ...new Set(dependencies)].filter(d => d.length > 0),
+    sources: sources.filter(isNotEmptyPiece),
+    comments: comments.filter(isNotEmptyPiece),
+    literals: literals.filter(isNotEmptyPiece),
+    dependencies: [...new Set(dependencies)].filter(d => d.length > 0),
     namespaces: namespaces.filter(ns => ns.length > 0),
     typedefs,
   }

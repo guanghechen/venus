@@ -5,9 +5,16 @@
  * #else
  * #endif
  */
-const getDefinitionRegex = (flags?: string) => new RegExp(/#ifdef\s*?\w*\s*?\n\s*(?:#else)?\s*?\n#endif(?:[^\n]*?)\n+/, flags)
-const getVenusDefinitionRegex = (flags?: string) => new RegExp(/#ifndef\s*?(VENUS\w*)\s*?\n\s*#define\s*?\1\n([^]*?)#endif(?:[^\n]*?)\n+/, flags)
-
+const getDefinitionRegex = (flags?: string): RegExp =>
+  new RegExp(
+    /#ifdef\s*?\w*\s*?\n\s*(?:#else)?\s*?\n#endif(?:[^\n]*?)\n+/,
+    flags,
+  )
+const getVenusDefinitionRegex = (flags?: string): RegExp =>
+  new RegExp(
+    /#ifndef\s*?(VENUS\w*)\s*?\n\s*#define\s*?\1\n([^]*?)#endif(?:[^\n]*?)\n+/,
+    flags,
+  )
 
 // 移除 freopen
 export const handleRemoveDefinition = (content: string): string => {

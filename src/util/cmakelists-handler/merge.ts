@@ -1,6 +1,5 @@
-import { CMakeLists } from './index'
 import { projectConfig } from '@/config/immutable'
-
+import type { CMakeLists } from '.'
 
 /**
  * 合并 CMakeLists.txt
@@ -21,14 +20,17 @@ export const merge = (cmakeLists: CMakeLists): string => {
 
   // add_compile_definitions
   const addCompileDefinitionSet: Set<string> = new Set<string>()
-  const addCompileDefinitions: string = [...cmakeLists.compileDefinitions.entries()]
+  const addCompileDefinitions: string = [
+    ...cmakeLists.compileDefinitions.entries(),
+  ]
     .filter(([target]) => {
       if (addCompileDefinitionSet.has(target)) return false
       addCompileDefinitionSet.add(target)
       return true
     })
     .map(([definition, value]) => {
-      if (value != null && value.length > 0) return `add_compile_definitions(${definition}=${value})`
+      if (value != null && value.length > 0)
+        return `add_compile_definitions(${definition}=${value})`
       return `add_compile_definitions(${definition})`
     })
     .join('\n')
@@ -44,12 +46,18 @@ export const merge = (cmakeLists: CMakeLists): string => {
     .sort(([, source1], [, source2]) => source1.localeCompare(source2))
 
   // 获取 add_executables 中 target 最长的长度，并使用空格补齐长度
-  const maxTargetLength: number = addExecutableEntries.reduce((m, c) => Math.max(m, c[0].length), 0)
-  const fillSpaces = (text: string) => text + ' '.repeat(maxTargetLength - text.length)
+  const maxTargetLength: number = addExecutableEntries.reduce(
+    (m, c) => Math.max(m, c[0].length),
+    0,
+  )
+  const fillSpaces = (text: string): string =>
+    text + ' '.repeat(maxTargetLength - text.length)
 
   // 拼接 add_executables 列表
   const addExecutables = addExecutableEntries
-    .map(([target, source]) => `add_executable(${fillSpaces(target)} ${source})`)
+    .map(
+      ([target, source]) => `add_executable(${fillSpaces(target)} ${source})`,
+    )
     .join('\n')
 
   return header

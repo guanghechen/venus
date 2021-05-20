@@ -1,8 +1,7 @@
-import fs from 'fs-extra'
-import path from 'path'
-import minimatch from 'minimatch'
 import { logger } from '@/util/logger'
-
+import fs from 'fs-extra'
+import minimatch from 'minimatch'
+import path from 'path'
 
 /**
  * 判断路径 p 是否为文件
@@ -13,10 +12,9 @@ import { logger } from '@/util/logger'
 export async function isFile(p: string | null): Promise<boolean> {
   if (p == null) return false
   if (!fs.existsSync(p)) return false
-  let stat = await fs.stat(p)
+  const stat = await fs.stat(p)
   return stat.isFile()
 }
-
 
 /**
  * 判断路径 p 是否为文件夹
@@ -27,10 +25,9 @@ export async function isFile(p: string | null): Promise<boolean> {
 export async function isDirectory(p: string | null): Promise<boolean> {
   if (p == null) return false
   if (!fs.existsSync(p)) return false
-  let stat = await fs.stat(p)
+  const stat = await fs.stat(p)
   return stat.isDirectory()
 }
-
 
 /**
  * 检查路径是否存在，若不存在则结束程序
@@ -40,27 +37,31 @@ export async function isDirectory(p: string | null): Promise<boolean> {
  * @param checkFile       是否检查其是否为文件
  * @param message         提示信息
  */
-export async function ensureExist(p: string | null, checkDirectory: boolean, checkFile: boolean, message?: string) {
+export async function ensureExist(
+  p: string | null,
+  checkDirectory: boolean,
+  checkFile: boolean,
+  message?: string,
+): Promise<void> {
   if (p == null) {
-    logger.error(message == null? 'the path is null.': message)
+    logger.error(message == null ? 'the path is null.' : message)
     process.exit(-1)
   }
   if (!fs.existsSync(p!)) {
-    logger.error(message == null? `${p} is not found.`: message)
+    logger.error(message == null ? `${p} is not found.` : message)
     process.exit(-1)
   }
   if (checkDirectory) {
     if (await isDirectory(p)) return
-    logger.error(message == null? `${p} is not a directory.`: message)
+    logger.error(message == null ? `${p} is not a directory.` : message)
     process.exit(-1)
   }
   if (checkFile) {
     if (await isFile(p)) return
-    logger.error(message == null? `${p} is not a file.`: message)
+    logger.error(message == null ? `${p} is not a file.` : message)
     process.exit(-1)
   }
 }
-
 
 /**
  * 检查文件是否存在
@@ -69,8 +70,10 @@ export async function ensureExist(p: string | null, checkDirectory: boolean, che
  * @param message
  * @see ensureExist(string, boolean, boolean, string)
  */
-export const ensureFileExist = async (p: string | null, message?: string) => ensureExist(p, false, true, message)
-
+export const ensureFileExist = async (
+  p: string | null,
+  message?: string,
+): Promise<void> => ensureExist(p, false, true, message)
 
 /**
  * 检查文件夹是否存在
@@ -79,8 +82,10 @@ export const ensureFileExist = async (p: string | null, message?: string) => ens
  * @param message
  * @see ensureExist(string, boolean, boolean, string)
  */
-export const ensureDirectoryExist = async (p: string | null, message?: string) => ensureExist(p, true, false, message)
-
+export const ensureDirectoryExist = async (
+  p: string | null,
+  message?: string,
+): Promise<void> => ensureExist(p, true, false, message)
 
 /**
  * 找到最近包含目标文件的路径（不断往祖先目录回溯）
@@ -88,15 +93,19 @@ export const ensureDirectoryExist = async (p: string | null, message?: string) =
  * @param p       搜索的路径
  * @param target  目标文件名
  */
-export async function findNearestTarget(p: string, target: string): Promise<string | null> {
-  if (!await isDirectory(p)) throw new Error(`\`${p}\` isn't a valid directory.`)
+export async function findNearestTarget(
+  p: string,
+  target: string,
+): Promise<string | null> {
+  if (!(await isDirectory(p)))
+    throw new Error(`\`${p}\` isn't a valid directory.`)
   const absoluteTarget = path.resolve(p, target)
   if (fs.existsSync(absoluteTarget)) return absoluteTarget
   const parentDirectory = path.dirname(p)
-  if (parentDirectory != p) return await findNearestTarget(parentDirectory, target)
+  if (parentDirectory != p)
+    return await findNearestTarget(parentDirectory, target)
   return null
 }
-
 
 /**
  * 收集某个目录下的文件
@@ -106,18 +115,24 @@ export async function findNearestTarget(p: string, target: string): Promise<stri
  * @param patterns    匹配模式
  * @return 该目录下的路径列表
  */
-export async function collectFiles(p: string, recursive: boolean, patterns?: string[]): Promise<string[]> {
-  let files = await fs.readdir(p)
-  let result: string[] = []
+export async function collectFiles(
+  p: string,
+  recursive: boolean,
+  patterns?: string[],
+): Promise<string[]> {
+  const files = await fs.readdir(p)
+  const result: string[] = []
   for (let file of files) {
     file = path.resolve(p, file)
     if (await isFile(file)) {
       // 需要满足特定的 pattern 的文件才将删除
-      if (patterns == null || patterns.some(pattern => minimatch(file, pattern, { matchBase: true })))
+      if (
+        patterns == null ||
+        patterns.some(pattern => minimatch(file, pattern, { matchBase: true }))
+      )
         result.push(file)
-    }
-    else if (recursive && await isDirectory(file)) {
-      result.push(...await collectFiles(file, recursive, patterns))
+    } else if (recursive && (await isDirectory(file))) {
+      result.push(...(await collectFiles(file, recursive, patterns)))
     }
   }
   return result

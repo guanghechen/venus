@@ -1,25 +1,28 @@
+import { yesOrNo } from '@/util/cli-util'
+import { remove } from '@/util/cmakelists-handler/remove'
+import {
+  collectFiles,
+  ensureExist,
+  ensureFileExist,
+  isDirectory,
+  isFile,
+} from '@/util/fs-util'
+import { logger } from '@/util/logger'
+import { relativePath } from '@/util/path-util'
+import { coverBoolean } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
 import path from 'path'
-import { DefaultRemoveConfig } from '@/config/remove'
-import { collectFiles, ensureExist, ensureFileExist, isDirectory, isFile } from '@/util/fs-util'
-import { coverBoolean } from '@/util/option-util'
-import { remove } from '@/util/cmakelists-handler/remove'
-import { logger } from '@/util/logger'
-import { yesOrNo } from '@/util/cli-util'
-import { relativePath } from '@/util/path-util'
-import { GlobalConfig } from '@/command'
-
+import type { GlobalConfig } from '@/command'
+import type { DefaultRemoveConfig } from '@/config/remove'
 
 interface RemoveArgument {
   readonly absoluteSourcePath: string
 }
 
-
 interface RemoveOption {
   readonly recursive?: boolean
   readonly force?: boolean
 }
-
 
 export interface RemoveConfig {
   readonly absoluteSourcePath: string
@@ -27,28 +30,38 @@ export interface RemoveConfig {
   readonly force: boolean
 }
 
-
 export class RemoveHandler {
   private readonly config: Promise<RemoveConfig>
   private readonly resolvedGlobalConfig: GlobalConfig
 
-  constructor(argument: RemoveArgument,
-              option: RemoveOption,
-              resolvedGlobalConfig: GlobalConfig,
-              defaultConfig: DefaultRemoveConfig) {
+  constructor(
+    argument: RemoveArgument,
+    option: RemoveOption,
+    resolvedGlobalConfig: GlobalConfig,
+    defaultConfig: DefaultRemoveConfig,
+  ) {
     this.resolvedGlobalConfig = resolvedGlobalConfig
     this.config = this.preprocess(argument, option, defaultConfig)
   }
 
-  public async handle() {
+  public async handle(): Promise<void> {
     const { executeDirectory, projectRootDirectory } = this.resolvedGlobalConfig
     const resolvedConfig = await this.config
 
     const { absoluteSourcePath } = resolvedConfig
-    const relativeSourcePath = relativePath(executeDirectory, absoluteSourcePath, projectRootDirectory)
+    const relativeSourcePath = relativePath(
+      executeDirectory,
+      absoluteSourcePath,
+      projectRootDirectory,
+    )
 
     // 确保路径存在
-    await ensureExist(absoluteSourcePath, false, false, `${relativeSourcePath} is not found.`)
+    await ensureExist(
+      absoluteSourcePath,
+      false,
+      false,
+      `${relativeSourcePath} is not found.`,
+    )
 
     // 如果是文件，则直接对其执行操作
     if (await isFile(absoluteSourcePath)) {
@@ -58,11 +71,18 @@ export class RemoveHandler {
 
     // 如果是文件夹，则对该文件夹下的所有文件执行操作
     if (await isDirectory(absoluteSourcePath)) {
-      const absoluteSourcePaths = await collectFiles(absoluteSourcePath, resolvedConfig.recursive)
-      for (let file of absoluteSourcePaths) await this.doRemove(file, resolvedConfig.force)
+      const absoluteSourcePaths = await collectFiles(
+        absoluteSourcePath,
+        resolvedConfig.recursive,
+      )
+      for (const file of absoluteSourcePaths)
+        await this.doRemove(file, resolvedConfig.force)
 
       // 如果文件夹中已经不存在文件了，则删除文件夹
-      let files = await collectFiles(absoluteSourcePath, resolvedConfig.recursive)
+      const files = await collectFiles(
+        absoluteSourcePath,
+        resolvedConfig.recursive,
+      )
       if (files.length <= 0) {
         await fs.remove(absoluteSourcePath)
         logger.info(`removed ${relativeSourcePath}`)
@@ -76,19 +96,34 @@ export class RemoveHandler {
    * @param absoluteSourcePath  源文件路径
    * @param force               暴力删除，无需经过用户同意
    */
-  private async doRemove(absoluteSourcePath: string, force: boolean) {
+  private async doRemove(
+    absoluteSourcePath: string,
+    force: boolean,
+  ): Promise<void> {
     // 如果后缀名不会 '.cpp' 或 '.c' 则直接无视
-    if (path.extname(absoluteSourcePath) !== '.cpp' && path.extname(absoluteSourcePath) !== '.c') return
+    if (
+      path.extname(absoluteSourcePath) !== '.cpp' &&
+      path.extname(absoluteSourcePath) !== '.c'
+    )
+      return
 
-    const { projectRootDirectory, executeDirectory, cmakeLists } = this.resolvedGlobalConfig
+    const { projectRootDirectory, executeDirectory, cmakeLists } =
+      this.resolvedGlobalConfig
 
     // 相对于执行命令所在的路径的相对路径，用于友好的提示
-    const relativeSourcePath = relativePath(executeDirectory, absoluteSourcePath, projectRootDirectory)
+    const relativeSourcePath = relativePath(
+      executeDirectory,
+      absoluteSourcePath,
+      projectRootDirectory,
+    )
 
     // 确保待删除的源文件存在
-    await ensureFileExist(absoluteSourcePath, `${relativeSourcePath} is not found.`)
+    await ensureFileExist(
+      absoluteSourcePath,
+      `${relativeSourcePath} is not found.`,
+    )
     if (!force) {
-      let confirm: boolean = await yesOrNo(`remove ${relativeSourcePath}`)
+      const confirm: boolean = await yesOrNo(`remove ${relativeSourcePath}`)
       if (!confirm) return
     }
 
@@ -97,7 +132,13 @@ export class RemoveHandler {
     logger.info(`removed ${relativeSourcePath}`)
 
     // 从 CmakeLists.txt 中删除
-    await remove(cmakeLists.filepath, cmakeLists.encoding, executeDirectory, projectRootDirectory, absoluteSourcePath)
+    await remove(
+      cmakeLists.filepath,
+      cmakeLists.encoding,
+      executeDirectory,
+      projectRootDirectory,
+      absoluteSourcePath,
+    )
   }
 
   /**
@@ -107,9 +148,11 @@ export class RemoveHandler {
    * @param option          命令的选项
    * @param defaultConfig   默认配置
    */
-  private async preprocess(argument: RemoveArgument,
-                           option: RemoveOption,
-                           defaultConfig: DefaultRemoveConfig): Promise<RemoveConfig> {
+  private async preprocess(
+    argument: RemoveArgument,
+    option: RemoveOption,
+    defaultConfig: DefaultRemoveConfig,
+  ): Promise<RemoveConfig> {
     return {
       absoluteSourcePath: argument.absoluteSourcePath,
       recursive: coverBoolean(defaultConfig.recursive, option.recursive),

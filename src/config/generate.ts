@@ -1,5 +1,4 @@
-import { coverBoolean } from '@/util/option-util'
-
+import { coverBoolean } from '@guanghechen/option-helper'
 
 /**
  * 配置文件的参数名
@@ -12,14 +11,13 @@ import { coverBoolean } from '@/util/option-util'
  * @member copy             => copy
  */
 export interface RawDefaultGenerateConfig {
-  readonly 'remove-comments': boolean,
-  readonly 'remove-spaces': boolean,
-  readonly 'remove-freopen': boolean,
-  readonly 'remove-assert': boolean,
-  readonly force: boolean,
-  readonly copy: boolean,
+  readonly 'remove-comments': boolean
+  readonly 'remove-spaces': boolean
+  readonly 'remove-freopen': boolean
+  readonly 'remove-assert': boolean
+  readonly force: boolean
+  readonly copy: boolean
 }
-
 
 /**
  * 子命令 'generate' 的默认选项
@@ -39,14 +37,17 @@ export class DefaultGenerateConfig {
   public readonly force: boolean
   public readonly copy: boolean
 
-  public constructor(rawConfig: RawDefaultGenerateConfig, partialRawConfig?: RawDefaultGenerateConfig) {
+  constructor(
+    rawConfig: RawDefaultGenerateConfig,
+    partialRawConfig?: RawDefaultGenerateConfig,
+  ) {
     const {
       'remove-spaces': removeSpaces,
       'remove-comments': removeComments,
       'remove-freopen': removeFreopen,
       'remove-assert': removeAssert,
-      'force': force,
-      'copy': copy,
+      force: force,
+      copy: copy,
     } = rawConfig
 
     const {
@@ -54,9 +55,9 @@ export class DefaultGenerateConfig {
       'remove-spaces': pRemoveSpaces,
       'remove-freopen': pRemoveFreopen,
       'remove-assert': pRemoveAssert,
-      'force': pForce,
-      'copy': pCopy,
-    } = partialRawConfig || {} as RawDefaultGenerateConfig
+      force: pForce,
+      copy: pCopy,
+    } = partialRawConfig ?? {}
 
     this.removeComments = coverBoolean(removeComments, pRemoveComments)
     this.removeSpaces = coverBoolean(removeSpaces, pRemoveSpaces)

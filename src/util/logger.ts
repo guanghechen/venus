@@ -1,8 +1,11 @@
-import { ColorfulChalkLogger, DEBUG } from 'colorful-chalk-logger'
+import { ChalkLogger } from '@barusu/chalk-logger'
 
-
-export const logger: ColorfulChalkLogger = new ColorfulChalkLogger('venus', {
-  colorful: true,
-  inline: true,
-  date: true,
-}, process.argv)
+export const logger = new ChalkLogger(
+  {
+    name: 'venus',
+    colorful: true,
+    inline: true,
+    date: true,
+  },
+  process.argv,
+)

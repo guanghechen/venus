@@ -1,8 +1,38 @@
 {
   "name": "venus-acm",
   "version": "1.1.11",
-  "author": "lemon-clown",
-  "description": "build cpp codes into single sources file.",
+  "description": "Merge cpp codes into single sources file.",
+  "author": {
+    "name": "guanghechen",
+    "url": "https://github.com/guanghechen/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:guanghechen/venus.git"
+  },
+  "homepage": "https://github.com/guanghechen/venus#readme",
+  "keywords": [
+    "typescript",
+    "cli",
+    "acm",
+    "single cpp file tool"
+  ],
+  "main": "lib/cjs/index.js",
+  "types": "lib/types/index.d.ts",
+  "source": "src/index.ts",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 14.15.0"
+  },
+  "files": [
+    "lib/",
+    "!lib/**/*.js.map",
+    "!lib/**/*.d.ts.map",
+    "package.json",
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md"
+  ],
   "bin": {
     "venus": "target/main.js"
   },
@@ -21,27 +51,16 @@
     "test": "echo 'no tests yet'",
     "update:lock": "yarn-deduplicate"
   },
-  "main": "target/main.js",
-  "repository": "git@github.com:lemon-clown/venus.git",
-  "keywords": [
-    "typescript",
-    "cli",
-    "acm"
-  ],
-  "license": "MIT",
   "dependencies": {
     "@barusu/chalk-logger": "^0.1.1",
     "@guanghechen/option-helper": "^1.5.0",
     "@types/js-yaml": "^4.0.1",
-    "@types/lodash": "^4.14.169",
     "@types/minimatch": "^3.0.4",
     "@types/node": "^15.3.1",
     "chalk": "^4.1.1",
     "commander": "^7.2.0",
     "fs-extra": "^10.0.0",
     "js-yaml": "^4.1.0",
-    "lodash": "^4.17.14",
-    "mini-copy": "^0.1.7",
     "minimatch": "^3.0.4"
   },
   "devDependencies": {

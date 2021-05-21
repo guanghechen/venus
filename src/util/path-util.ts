@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { isString } from '@guanghechen/option-helper'
 import path from 'path'
 
 /**
@@ -18,7 +18,7 @@ export const relativePath = (
   rootDirectory?: string,
 ): string => {
   let relativePath: string
-  if (_.isString(rootDirectory)) {
+  if (isString(rootDirectory)) {
     const isSubDirectory =
       directory.startsWith(rootDirectory) &&
       (directory === rootDirectory ||

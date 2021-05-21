@@ -2,9 +2,8 @@ import { getDefaultCreateConfig } from '@/config'
 import { ensureDirectoryExist } from '@/util/fs-util'
 import { logger } from '@/util/logger'
 import { relativePath } from '@/util/path-util'
-import { coverInteger } from '@guanghechen/option-helper'
+import { coverInteger, isArray, isString } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
-import _ from 'lodash'
 import path from 'path'
 import type { GlobalConfig } from '@/command'
 import type {
@@ -53,15 +52,15 @@ export default (
       // 指定 --contest 时，必须要指定 --round，且 source 必须为空数组；
       // 否则必须不能指定 --round 和 --problem-number，且 source 必须不为空数组
 
-      if (_.isString(option.contest)) {
-        if (!_.isString(option.round) || option.round.length <= 0) {
+      if (isString(option.contest)) {
+        if (!isString(option.round) || option.round.length <= 0) {
           logger.error(
             'you have specified contest, but not specified a valid round.',
           )
           process.exit(-1)
         }
 
-        if (_.isArray(sourcePaths) && sourcePaths.length > 0) {
+        if (isArray(sourcePaths) && sourcePaths.length > 0) {
           logger.warn(
             `you have specified the --contest option, the source-paths(${sourcePaths}) will be ignored.`,
           )
@@ -123,18 +122,18 @@ export default (
           return path.resolve(targetDirectory, name + '.cpp')
         })
       } else {
-        if (!_.isArray(sourcePaths) || sourcePaths.length <= 0) {
+        if (!isArray(sourcePaths) || sourcePaths.length <= 0) {
           logger.error(
             "the command arguments missed, while you haven't specified the --contest.",
           )
           process.exit(-1)
         }
-        if (_.isString(option.round)) {
+        if (isString(option.round)) {
           logger.warn(
             "the --round option is invalid, as you haven't specified the --contest option",
           )
         }
-        if (_.isString(option.problemNumber)) {
+        if (isString(option.problemNumber)) {
           logger.warn(
             "the --problem-number option is invalid, as you haven't specified the --contest option",
           )

@@ -2,7 +2,6 @@ import { DefaultCleanConfig } from '@/config/clean'
 import { isFile } from '@/util/fs-util'
 import fs from 'fs-extra'
 import yaml from 'js-yaml'
-import _ from 'lodash'
 import path from 'path'
 import type { RawDefaultCleanConfig } from '@/config/clean'
 import { DefaultCreateConfig } from './create'
@@ -16,7 +15,7 @@ import type { RawDefaultRemoveConfig } from './remove'
 
 const absoluteLocaleConfigPath = path.join(__dirname, 'config.yml')
 const localConfigContent = fs.readFileSync(absoluteLocaleConfigPath, 'utf-8')
-const localRawConfig = yaml.safeLoad(localConfigContent)
+const localRawConfig = yaml.load(localConfigContent) as RawPartialConfig
 
 /**
  * 配置文件的类型
@@ -45,7 +44,7 @@ export const getPartialRawConfig = async (
   )
   if (await isFile(absoluteConfigPath)) {
     const configContent = fs.readFileSync(absoluteConfigPath, 'utf-8')
-    return yaml.safeLoad(configContent)
+    return yaml.load(configContent) as unknown as RawPartialConfig
   }
 }
 
@@ -55,8 +54,8 @@ export const getPartialRawConfig = async (
 export const getDefaultGenerateConfig = (
   partialRawConfig?: RawDefaultGenerateConfig,
 ): DefaultGenerateConfig => {
-  const rawConfig = _.cloneDeep(localRawConfig)
-  return new DefaultGenerateConfig(rawConfig.generate, partialRawConfig)
+  const { generate } = localRawConfig
+  return new DefaultGenerateConfig(generate, partialRawConfig)
 }
 
 /**
@@ -65,8 +64,8 @@ export const getDefaultGenerateConfig = (
 export const getDefaultCreateConfig = (
   partialRawConfig?: RawDefaultCreateConfig,
 ): DefaultCreateConfig => {
-  const rawConfig = _.cloneDeep(localRawConfig)
-  return new DefaultCreateConfig(rawConfig.create, partialRawConfig)
+  const { create } = localRawConfig
+  return new DefaultCreateConfig(create, partialRawConfig)
 }
 
 /**
@@ -75,8 +74,8 @@ export const getDefaultCreateConfig = (
 export const getDefaultRegisterConfig = (
   partialRawConfig?: RawDefaultRegisterConfig,
 ): DefaultRegisterConfig => {
-  const rawConfig = _.cloneDeep(localRawConfig)
-  return new DefaultRegisterConfig(rawConfig.register, partialRawConfig)
+  const { register } = localRawConfig
+  return new DefaultRegisterConfig(register, partialRawConfig)
 }
 
 /**
@@ -85,8 +84,8 @@ export const getDefaultRegisterConfig = (
 export const getDefaultRemoveConfig = (
   partialRawConfig?: RawDefaultRemoveConfig,
 ): DefaultRemoveConfig => {
-  const rawConfig = _.cloneDeep(localRawConfig)
-  return new DefaultRemoveConfig(rawConfig.remove, partialRawConfig)
+  const { remove } = localRawConfig
+  return new DefaultRemoveConfig(remove, partialRawConfig)
 }
 
 /**
@@ -95,6 +94,6 @@ export const getDefaultRemoveConfig = (
 export const getDefaultCleanConfig = (
   partialRawConfig?: RawDefaultCleanConfig,
 ): DefaultCleanConfig => {
-  const rawConfig = _.cloneDeep(localRawConfig)
-  return new DefaultCleanConfig(rawConfig.clean, partialRawConfig)
+  const { clean } = localRawConfig
+  return new DefaultCleanConfig(clean, partialRawConfig)
 }

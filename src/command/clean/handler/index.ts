@@ -7,9 +7,8 @@ import {
 } from '@/util/fs-util'
 import { logger } from '@/util/logger'
 import { relativePath } from '@/util/path-util'
-import { coverBoolean, coverString } from '@guanghechen/option-helper'
+import { coverBoolean, coverString, isArray } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
-import _ from 'lodash'
 import type { GlobalConfig } from '@/command'
 import type { DefaultCleanConfig } from '@/config/clean'
 
@@ -136,7 +135,7 @@ export class CleanHandler {
       ),
       patterns: [
         ...defaultConfig.patterns,
-        ...(_.isArray(option.pattern) ? option.pattern : []),
+        ...(isArray(option.pattern) ? option.pattern : []),
       ],
     }
   }

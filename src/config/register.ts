@@ -17,7 +17,7 @@ export class DefaultRegisterConfig {
   public readonly recursive: boolean
 
   constructor(
-    rawConfig: RawDefaultRegisterConfig,
+    rawConfig: Readonly<RawDefaultRegisterConfig>,
     partialRawConfig?: RawDefaultRegisterConfig,
   ) {
     const { recursive } = rawConfig

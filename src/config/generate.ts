@@ -38,7 +38,7 @@ export class DefaultGenerateConfig {
   public readonly copy: boolean
 
   constructor(
-    rawConfig: RawDefaultGenerateConfig,
+    rawConfig: Readonly<RawDefaultGenerateConfig>,
     partialRawConfig?: RawDefaultGenerateConfig,
   ) {
     const {

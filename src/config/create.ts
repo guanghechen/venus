@@ -87,7 +87,7 @@ export class DefaultCreateConfig {
   >
 
   constructor(
-    rawConfig: RawDefaultCreateConfig,
+    rawConfig: Readonly<RawDefaultCreateConfig>,
     partialRawConfig?: RawDefaultCreateConfig,
   ) {
     const { template, data, categories } = rawConfig

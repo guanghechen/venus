@@ -1,4 +1,8 @@
-import { coverArray, coverBoolean } from '@guanghechen/option-helper'
+import {
+  cover,
+  coverBoolean,
+  isNotEmptyArray,
+} from '@guanghechen/option-helper'
 
 /**
  * 配置文件的参数名
@@ -34,6 +38,6 @@ export class DefaultCleanConfig {
     } = partialRawConfig ?? {}
     this.force = coverBoolean(force, pForce)
     this.recursive = coverBoolean(recursive, pRecursive)
-    this.patterns = coverArray(patterns, pPatterns)
+    this.patterns = cover(patterns, pPatterns, isNotEmptyArray)
   }
 }

@@ -1,7 +1,6 @@
 import {
   coverBoolean,
   coverInteger,
-  coverObject,
   coverString,
 } from '@guanghechen/option-helper'
 
@@ -109,7 +108,7 @@ export class DefaultCreateConfig {
       filename: coverString(data.filename, pData.filename),
     }
 
-    const resolvedCategories = coverObject(categories, pCategories)
+    const resolvedCategories = { ...categories, ...pCategories }
     this.categories = Object.getOwnPropertyNames(resolvedCategories).reduce(
       (result, c) => ({
         ...result,

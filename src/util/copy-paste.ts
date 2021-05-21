@@ -1,7 +1,5 @@
-import { copy as realCopy, paste as realPaste } from 'mini-copy'
-import { logger } from './logger'
+import clipboardy from 'clipboardy'
 
 export const copy = async (content: string): Promise<void> =>
-  realCopy(content, { logger: logger as any })
-export const paste = async (): Promise<string> =>
-  realPaste({ logger: logger as any })
+  clipboardy.write(content)
+export const paste = async (): Promise<string> => clipboardy.read()

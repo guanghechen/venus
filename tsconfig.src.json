@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.settings",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  },
+  "include": ["src", "__test__"]
+}

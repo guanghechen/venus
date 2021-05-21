@@ -1,15 +1,12 @@
 import { getPartialRawConfig } from '@/config'
 import { projectConfig } from '@/config/immutable'
-import { ensureFileExist, findNearestTarget } from '@/util/fs-util'
+import { ensureFileExists, findNearestTarget } from '@/util/fs-util'
 import { logger } from '@/util/logger'
 import { coverString } from '@guanghechen/option-helper'
 import path from 'path'
 import type { RawPartialConfig } from '@/config'
-import loadCleanCommand from './clean'
 import loadCreateCommand from './create'
 import loadGenerateCommand from './generate'
-import loadRegisterCommand from './register'
-import loadRemoveCommand from './remove'
 import type commander from 'commander'
 
 export interface GlobalConfig {
@@ -41,15 +38,6 @@ export default (program: commander.Command & any): void => {
 
   // 挂载 create/new 子命令
   loadCreateCommand(program, getRawPartialConfig('create'), getGlobalConfig)
-
-  // 挂载 register 子命令
-  loadRegisterCommand(program, getRawPartialConfig('register'), getGlobalConfig)
-
-  // 挂载 remove 子命令
-  loadRemoveCommand(program, getRawPartialConfig('remove'), getGlobalConfig)
-
-  // 挂载 clean 子命令
-  loadCleanCommand(program, getRawPartialConfig('clean'), getGlobalConfig)
 
   program.command('*').action(() => {
     logger.error('unknown command.')
@@ -114,7 +102,7 @@ export default (program: commander.Command & any): void => {
         : await findNearestTarget(executeDirectory, cmakeListsFileName)
 
     // 确保 CMakeLists.txt 存在
-    await ensureFileExist(
+    ensureFileExists(
       absoluteCmakeListsPath,
       `'${cmakeListsFileName}' is not found.`,
     )

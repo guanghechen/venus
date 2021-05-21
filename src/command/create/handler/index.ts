@@ -1,5 +1,4 @@
 import { yesOrNo } from '@/util/cli-util'
-import { register } from '@/util/cmakelists-handler/register'
 import { logger } from '@/util/logger'
 import { relativePath } from '@/util/path-util'
 import { coverBoolean, coverString } from '@guanghechen/option-helper'
@@ -102,15 +101,6 @@ export class CreateHandler {
     // 写入文件
     await fs.writeFile(absoluteSourcePath, content, encoding)
     logger.info(`written into ${relativeSourcePath}.`)
-
-    // 注册进 CmakeLists.txt 中
-    await register(
-      cmakeLists.filepath,
-      cmakeLists.encoding,
-      executeDirectory,
-      projectRootDirectory,
-      absoluteSourcePath,
-    )
   }
 
   /**

@@ -2,71 +2,66 @@ import { languageConfig } from '@/config/immutable'
 import { logger } from '@/util/logger'
 import type { SourceItem, SourcePiece } from './types'
 
-/**
- * 获取依赖列表
- */
-const getImportRegex = (flags?: string): RegExp =>
+// Match dependency list.
+const createImportRegex = (flags?: string): RegExp =>
   new RegExp(/#include\s*[<"]([\w\-_.:/\\]+)[>"]\s*?\n/, flags)
 
-/**
- * 获取命令空间列表
- */
-const getNamespaceRegex = (flags?: string): RegExp =>
+// Match using namespace declarations.
+const createNamespaceRegex = (flags?: string): RegExp =>
   new RegExp(/using\s+namespace\s+(\w+)\s*;\s*/, flags)
 
-/**
- * 获取类型别名列表
- */
-const getTypedefRegex = (flags?: string): RegExp =>
+// Match type alias list.
+const createTypedefRegex = (flags?: string): RegExp =>
   new RegExp(/typedef\s+([\w* <>]+)\s+(\w+)\s*;\s*/, flags)
 
 /**
- * 从指定位置开始匹配一个宏
+ * Try to match a macro definition from the given position.
  *
- * @param content   源码
- * @param _start    起始的位置
+ * @param content
+ * @param start
  */
-const matchMacro = (content: string, _start: number): SourcePiece => {
-  let start = _start
+function matchMacro(content: string, start: number): SourcePiece {
+  let i = start
 
   // Preserve the preceding whitespaces
-  for (; start > 0; --start) {
-    if (!/^[\t ]$/.test(content.charAt(start - 1))) break
+  for (; i > 0; --i) {
+    if (!/^[\t ]$/.test(content.charAt(i - 1))) break
   }
 
-  let end = start + 1
+  let end = start
   for (; end < content.length; ++end) {
-    const letter = content.charAt(end)
-    if (letter != '\\' && letter !== '\n') continue
-    if (letter === '\n') break
+    const c = content.charAt(end)
+    if (c === '\n') break
+    if (c !== '\\') continue
 
     for (end += 1; end < content.length; ++end) {
       if (/[\S]/.test(content.charAt(end))) break
     }
     end -= 1
   }
-  return { start, content: content.slice(start, end + 1) }
+  return { start: i, content: content.slice(i, end + 1) }
 }
 
 /**
- * 从指定位置开始匹配一段明文字符串
+ * Try to match literal contents from the given position.
  *
- * @param content   源码
- * @param start     起始的位置
+ * @param content
+ * @param start
  */
-const matchLiteral = (content: string, start: number): SourcePiece => {
+function matchLiteral(content: string, start: number): SourcePiece {
   let end = start + 1
   const quote = content.charAt(start)
   for (; end < content.length; ++end) {
-    const letter = content.charAt(end)
-    if (letter !== '\\' && letter !== quote) continue
-    if (letter === quote) break
-    end += 1 // 如果碰到反斜杠，则再吃一个字符
+    const c = content.charAt(end)
+    if (c === quote) break
+
+    // If encounter an backslash, eating one more character.
+    if (c === '\\') end += 1
   }
 
-  // 引号没有结束
+  // The quote is not closed.
   if (end >= content.length) {
-    logger.fatal('bad source file. the quotation mark is not closed.')
+    logger.fatal('[Bad]: quote is not closed.', content.slice(start))
     process.exit(-1)
   }
 
@@ -74,71 +69,70 @@ const matchLiteral = (content: string, start: number): SourcePiece => {
 }
 
 /**
- * 从指定位置开始匹配一段行内注释
+ * Try to match an inline comment from the given position.
  *
- * @param content   源码
- * @param start     起始位置
- * @param lcSymbol  行内注释符
+ * @param content
+ * @param start
+ * @param marker  inline comment marker
  */
-const matchLineComment = (
+function matchInlineComment(
   content: string,
   start: number,
-  lcSymbol: string,
-): SourcePiece => {
-  let end = start + lcSymbol.length
+  marker: string,
+): SourcePiece {
+  let end = start + marker.length
   for (; end < content.length; ++end) {
     if (content.charAt(end) === '\n') break
   }
 
-  // 即使没有换行符，到了行末了也相当于注释结尾
+  // The end of content also could be the ending of the inline comment.
   return { start, content: content.slice(start, end) }
 }
 
 /**
- * 从指定位置开始匹配一段块注释
+ * Try to match a block comment from the given position.
  *
- * @param content   源码
- * @param start     起始位置
- * @param bcSymbol  块注释符
+ * @param content
+ * @param start
+ * @param marker
  */
-const matchBlockComment = (
+function matchBlockComment(
   content: string,
-  _start: number,
-  bcSymbol: [string, string],
-): SourcePiece => {
-  let start = _start
+  start: number,
+  marker: [string, string],
+): SourcePiece {
+  let i = start
 
   // Preserve the preceding whitespaces
-  for (; start > 0; --start) {
-    if (!/^[\t ]$/.test(content.charAt(start - 1))) break
+  for (; i > 0; --i) {
+    if (!/^[\t ]$/.test(content.charAt(i - 1))) break
   }
 
-  let end = start + bcSymbol[0].length
+  let end = i + marker[0].length
   for (; end < content.length; ++end) {
-    if (content.startsWith(bcSymbol[1], end)) break
+    if (content.startsWith(marker[1], end)) break
   }
 
-  // 块注释没有结束
+  // The block comment is not closed.
   if (end >= content.length) {
-    logger.fatal('bad source file. the block comment is not closed.')
+    logger.fatal('[Bad] block comment is not closed.', content.slice(start))
     process.exit(-1)
   }
 
-  end += bcSymbol[1].length
+  end += marker[1].length
 
   // Try to match the remaining whitespaces
   for (; end < content.length; ++end) {
-    if (!/[\s]/.test(content.charAt(end))) break
+    if (/\S/u.test(content.charAt(end))) break
   }
-  return { start, content: content.slice(start, end) }
+  return { start: i, content: content.slice(i, end) }
 }
 
 /**
- * 通过注释切割、划分源码
- * @param content         源码内容
- * @return {@link SourceItems}
+ * Split source contents into various pieces.
+ * @param content
  */
-export const partition = (content: string): SourceItem => {
+export function parse(content: string): SourceItem {
   const { macroMark, quoteMark, inlineCommentMark, blockCommentMark } =
     languageConfig
   const macros: SourcePiece[] = []
@@ -153,13 +147,13 @@ export const partition = (content: string): SourceItem => {
   for (let i = lastIndex; i < content.length; ++i) {
     let sourcePiece: SourcePiece | null = null
 
-    // 匹配宏
+    // Try to match macro declaration
     if (sourcePiece == null && content.startsWith(macroMark, i)) {
       sourcePiece = matchMacro(content, i)
       macros.push(sourcePiece)
     }
 
-    // 匹配明文字符串
+    // Try to match literal contents
     if (sourcePiece == null) {
       for (const quote of quoteMark) {
         if (content.startsWith(quote, i)) {
@@ -169,65 +163,65 @@ export const partition = (content: string): SourceItem => {
       }
     }
 
-    // 匹配单行注释
+    // Try to match inline comments
     if (sourcePiece == null && content.startsWith(inlineCommentMark, i)) {
-      sourcePiece = matchLineComment(content, i, inlineCommentMark)
+      sourcePiece = matchInlineComment(content, i, inlineCommentMark)
       comments.push(sourcePiece)
     }
 
-    // 匹配多行注释
+    // Try to match block comments
     if (sourcePiece == null && content.startsWith(blockCommentMark[0], i)) {
       sourcePiece = matchBlockComment(content, i, blockCommentMark)
       comments.push(sourcePiece)
     }
 
+    // Unknown contents
     if (sourcePiece == null) continue
+
     sources.push({
       start: lastIndex,
       content: content.slice(lastIndex, sourcePiece.start),
     })
+
     lastIndex = sourcePiece.start + sourcePiece.content.length
     i = lastIndex - 1
   }
 
-  // 最后一片是源码
+  // The last piece is a literal content.
   sources.push({ start: lastIndex, content: content.slice(lastIndex) })
 
-  // 获取依赖
-  macros.forEach(macro => {
-    // eslint-disable-next-line no-param-reassign
+  // Get dependency list from macro declarations.
+  for (const macro of macros) {
     macro.content = macro.content.replace(
-      getImportRegex('g'),
-      (match: string, dependency: string) => {
+      createImportRegex('g'),
+      (_: string, dependency: string) => {
         dependencies.push(dependency)
         return ''
       },
     )
-  })
+  }
 
-  // 获取命令空间
-  sources.forEach(source => {
-    // eslint-disable-next-line no-param-reassign
+  // Get namespaces.
+  for (const source of sources) {
     source.content = source.content.replace(
-      getNamespaceRegex('g'),
-      (match: string, ns: string) => {
+      createNamespaceRegex('g'),
+      (_: string, ns: string) => {
         namespaces.push(ns)
         return ''
       },
     )
-  })
+  }
 
-  // 获取 typedef
-  sources.forEach(source => {
-    // eslint-disable-next-line no-param-reassign
+  // Get typedef declarations
+  for (const source of sources) {
     source.content = source.content.replace(
-      getTypedefRegex('g'),
-      (match: string, raw: string, alias: string) => {
+      createTypedefRegex('g'),
+      (_: string, raw: string, alias: string) => {
         typedefs.set(alias, raw)
         return ''
       },
     )
-  })
+  }
 
   const isNotEmptyPiece = (sourcePiece: SourcePiece): boolean =>
     sourcePiece.content.length > 0
@@ -237,8 +231,10 @@ export const partition = (content: string): SourceItem => {
     sources: sources.filter(isNotEmptyPiece),
     comments: comments.filter(isNotEmptyPiece),
     literals: literals.filter(isNotEmptyPiece),
-    dependencies: [...new Set(dependencies)].filter(d => d.length > 0),
+    dependencies: Array.from(new Set(dependencies)).filter(d => d.length > 0),
     namespaces: namespaces.filter(ns => ns.length > 0),
     typedefs,
   }
 }
+
+export default parse

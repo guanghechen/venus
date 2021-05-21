@@ -4,12 +4,12 @@ export interface TopoNode {
 }
 
 /**
- * calc degree of nodes.
+ * Calc in-degree of nodes.
  * @param node
  * @param du
  * @param nodeMap
  */
-function calcDu(
+function calcInDegree(
   node: TopoNode,
   du: Map<string, number>,
   nodeMap: Map<string, TopoNode>,
@@ -20,13 +20,13 @@ function calcDu(
     if (du.has(o.value)) du.set(o.value, du.get(o.value)! + 1)
     else {
       du.set(o.value, 1)
-      calcDu(o, du, nodeMap)
+      calcInDegree(o, du, nodeMap)
     }
   }
 }
 
 /**
- * topo sort
+ * Topo sort
  * @param node
  */
 export function toposort(node: TopoNode): string[] {
@@ -35,7 +35,7 @@ export function toposort(node: TopoNode): string[] {
   const values: string[] = []
   const q: string[] = []
 
-  calcDu(node, du, nodeMap)
+  calcInDegree(node, du, nodeMap)
   du.set(node.value, 0)
   for (const [key, val] of du.entries()) {
     if (val === 0) q.push(key)

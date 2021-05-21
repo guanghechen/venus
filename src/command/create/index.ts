@@ -1,5 +1,5 @@
 import { getDefaultCreateConfig } from '@/config'
-import { ensureDirectoryExist } from '@/util/fs-util'
+import { ensureDirectoryExists } from '@/util/fs-util'
 import { logger } from '@/util/logger'
 import { relativePath } from '@/util/path-util'
 import { coverInteger, isArray, isString } from '@guanghechen/option-helper'
@@ -85,7 +85,8 @@ export default (
           projectRootDirectory,
           category.dirname,
         )
-        await ensureDirectoryExist(
+
+        ensureDirectoryExists(
           contestDirectory,
           relativePath(
             executeDirectory,

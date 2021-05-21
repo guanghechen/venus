@@ -1,75 +1,71 @@
 import type { SourceItem } from './types'
 
 /**
- * 排序的单元
- *
- * @member type     单元的类型 (macro\source\comment\literal)
- * @member rank     单元的优先级
- * @member content  单元的具体内容
+ * Token of cpp source codes
+ * @member type
+ * @member rank
+ * @member content
  */
-interface SortItem {
-  type: string
+interface Token {
+  type: 'macro' | 'source' | 'comment' | 'literal'
   rank: number
   content: string
 }
 
 /**
  * 合并源码、注释、明文字符串
+ * Merge source codes, comments and literal strings
+ *
  * @param sourceItem
- * @return 合并后的代码
  */
-export const merge = (sourceItem: SourceItem): string => {
+export function merge(sourceItem: SourceItem): string {
   const contentPieces: string[] = [
     ...sourceItem.macros.map(
-      ({ start, content }): SortItem => ({
+      ({ start, content }): Token => ({
         type: 'macro',
         rank: start,
         content,
       }),
     ),
     ...sourceItem.sources.map(
-      ({ start, content }): SortItem => ({
+      ({ start, content }): Token => ({
         type: 'source',
         rank: start,
         content,
       }),
     ),
     ...sourceItem.comments.map(
-      ({ start, content }): SortItem => ({
+      ({ start, content }): Token => ({
         type: 'comment',
         rank: start,
         content,
       }),
     ),
     ...sourceItem.literals.map(
-      ({ start, content }): SortItem => ({
+      ({ start, content }): Token => ({
         type: 'literal',
         rank: start,
         content,
       }),
     ),
   ]
-    .sort((alpha: SortItem, beta: SortItem): number => alpha.rank - beta.rank)
-    .map((item: SortItem, index: number, sortItem: SortItem[]): string => {
-      if (index === 0 || item.type !== 'macro') return item.content
-      // eslint-disable-next-line no-param-reassign
-      item.content = item.content
-        .replace(/^\n*/, /\n+$/.test(sortItem[index - 1].content) ? '' : '\n')
-        .replace('/s*$/', '\n')
-      return item.content
+    .sort((x: Token, y: Token): number => x.rank - y.rank)
+    .map((token: Token): string => {
+      if (token.type !== 'macro') return token.content
+      return token.content.replace(/^[\n]*/, '').trimRight()
     })
 
-  const dependencies: string = [...new Set(sourceItem.dependencies)]
+  const dependencies: string = Array.from(new Set(sourceItem.dependencies))
     .sort((x: string, y: string) => {
-      if (x == y) return 0
-      if (x.length !== y.length) return x.length - y.length
+      if (x === y) return 0
       return x < y ? -1 : 1
     })
-    .map(dependency => `#include <${dependency}>`)
+    .map(dependency => `#include <${dependency.trim()}>`)
     .join('\n')
 
   const namespaceSet: Set<string> = new Set<string>()
   const namespaces: string = sourceItem.namespaces
+    .map(ns => ns.trim())
     .filter(ns => {
       if (namespaceSet.has(ns)) return false
       namespaceSet.add(ns)
@@ -78,7 +74,7 @@ export const merge = (sourceItem: SourceItem): string => {
     .map(ns => `using namespace ${ns};`)
     .join('\n')
 
-  const typedefs: string = [...sourceItem.typedefs.entries()]
+  const typedefs: string = Array.from(sourceItem.typedefs.entries())
     .map(([alias, raw]) => `typedef ${raw} ${alias};`)
     .join('\n')
 
@@ -88,7 +84,7 @@ export const merge = (sourceItem: SourceItem): string => {
     .replace(/(\n\s*?){2,}/g, '\n\n')
     .concat('\n')
 
-  return dependencies
+  const result = dependencies
     .concat(
       namespaces != null && namespaces.length > 0 ? '\n' + namespaces : '',
     )
@@ -96,4 +92,7 @@ export const merge = (sourceItem: SourceItem): string => {
     .concat(typedefs != null && typedefs.length > 0 ? typedefs + '\n\n' : '')
     .concat(content.trim())
     .concat('\n')
+  return result
 }
+
+export default merge

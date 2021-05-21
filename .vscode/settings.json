@@ -4,11 +4,13 @@
     "barusu",
     "clipboardy",
     "cmake",
+    "dirpath",
     "freopen",
     "guanghechen",
     "pinst",
     "postpublish",
     "toposort",
+    "typedefs",
     "whitespaces"
   ]
 }

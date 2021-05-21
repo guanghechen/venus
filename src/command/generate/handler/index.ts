@@ -1,6 +1,6 @@
 import { handleRemoveAsserts } from '@/command/generate/handler/handle-remove-asserts'
 import { resolveLocalDependencyPath } from '@/util/cmakelists-handler/dependency'
-import { ensureFileExist } from '@/util/fs-util'
+import { ensureFileExists } from '@/util/fs-util'
 import { resolveDependencies } from '@/util/source-handler/dependency'
 import { coverBoolean } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
@@ -124,7 +124,7 @@ export class GenerateHandler {
     )
 
     // 确保源文件是否存在
-    await ensureFileExist(absoluteSourcePath)
+    ensureFileExists(absoluteSourcePath)
 
     const config: GenerateConfig = {
       removeComments:

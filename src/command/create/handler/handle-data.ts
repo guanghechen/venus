@@ -2,7 +2,7 @@ import { isFile } from '@/util/fs-util'
 import { logger } from '@/util/logger'
 import { relativePath } from '@/util/path-util'
 import { merge } from '@/util/source-handler/merge'
-import { partition } from '@/util/source-handler/partition'
+import { parse } from '@/util/source-handler/parse'
 import fs from 'fs-extra'
 import path from 'path'
 
@@ -42,7 +42,7 @@ export const handleData = async (
   }
 
   const mainRegex = getMainRegex()
-  const sourceItem = partition(content)
+  const sourceItem = parse(content)
 
   // 要使用 freopen 需要保证引用了 cstdio 包
   sourceItem.dependencies.push('cstdio')

@@ -1,49 +1,101 @@
-import { ensureFileExist } from '@/util/fs-util'
+import { ensureFileExists } from '@/util/fs-util'
 import { logger } from '@/util/logger'
 import { toposort } from '@/util/topo-sort'
+import { isNonBlankString } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
 import type { TopoNode } from '@/util/topo-sort'
-import { merge } from './merge'
-import { partition } from './partition'
+import merge from './merge'
+import parse from './parse'
 
 /**
- * 将所有的本地依赖都替换为相应的源码
+ * Replace the local dependencies with the referenced source contents
  *
- * @param resolveDependencyPath   计算本地依赖的绝对路径（标准库则返回 null）
- * @param absoluteSourcePath      源文件的绝对路径
- * @param encoding                源文件的编码格式
- * @return 解决依赖后的源文件内容
+ * @param resolveDependencyPath   calc the absolute path of local dependencies
+ * @param absoluteSourcePath      absolute path of the source file
+ * @param encoding                encoding of the source file
+ * @return resolved source code
  */
-export const resolveDependencies = async (
+export async function resolveDependencies(
   resolveDependencyPath: (
     dependencies: string[],
     absoluteSourcePath: string,
   ) => Promise<Array<string | null>>,
   absoluteSourcePath: string,
   encoding: string,
-): Promise<string> => {
-  const standardDependencies: string[] = [] // 标准库依赖
-  const dependencySet: Set<string> = new Set<string>() // 用于判重
+): Promise<string> {
   const namespaces: string[] = []
+  const standardDependencies: string[] = []
   const typedefs: Map<string, string> = new Map<string, string>()
+
+  // Collect dependencies.
+  const o = await collectDependencies(
+    resolveDependencyPath,
+    absoluteSourcePath,
+    encoding,
+    standardDependencies,
+  )
+
+  o.value = ''
+  const localDependencies: string[] = toposort(o)
+    .filter(u => u != '')
+    .reverse() // 按照依赖的拓扑顺序的逆序添加本地的依赖
+
+  let result = ''
+
+  // 按照依赖的拓扑序将代码拼接，并将源文件添加到末尾，使得生成的代码中出现在最下面
+  localDependencies.push(absoluteSourcePath)
+  for (const dependency of localDependencies) {
+    ensureFileExists(dependency)
+    const content = await fs.readFile(dependency, { encoding })
+    const sourceItem = parse(content)
+    namespaces.push(...sourceItem.namespaces)
+    for (const [key, val] of sourceItem.typedefs.entries()) {
+      typedefs.set(key, val)
+    }
+    result += merge({ ...sourceItem, dependencies: [] }).concat('\n')
+  }
+
+  const sourceItem = parse(result)
+  namespaces.push(...sourceItem.namespaces)
+  for (const [key, val] of sourceItem.typedefs.entries()) {
+    typedefs.set(key, val)
+  }
+
+  const resolvedContent = merge({
+    ...sourceItem,
+    dependencies: standardDependencies,
+    namespaces,
+    typedefs,
+  })
+  return resolvedContent
+}
+
+/**
+ *
+ * @param resolveDependencyPath
+ * @param absolutePath
+ * @param encoding
+ * @param standardDependencies
+ * @returns
+ */
+async function collectDependencies(
+  resolveDependencyPath: (
+    dependencies: string[],
+    absoluteSourcePath: string,
+  ) => Promise<Array<string | null>>,
+  absolutePath: string,
+  encoding: string,
+  standardDependencies: string[],
+): Promise<TopoNode> {
+  const dependencySet: Set<string> = new Set<string>()
   const topoNodeMap: Map<string, TopoNode> = new Map<string, TopoNode>()
 
-  /**
-   * 收集所有的标准库依赖和本地库依赖
-   * @param absolutePath 当前解析的源文件的绝对路径
-   */
-  const collectDependencies = async (
-    absolutePath: string,
-  ): Promise<TopoNode> => {
-    await ensureFileExist(absolutePath)
+  async function collect(absolutePath: string): Promise<TopoNode> {
+    ensureFileExists(absolutePath)
     const content = await fs.readFile(absolutePath, { encoding })
-    const dependencies = partition(content).dependencies.filter(dependency => {
-      // 如果为空，则直接跳过
-      if (dependency == null || /^\s*$/.test(dependency)) return false
-      return true
-    })
+    const dependencies = parse(content).dependencies.filter(isNonBlankString)
 
-    // 获得依赖的绝对路径
+    // Calc the absolute dependency path
     const resolvedDependencies = await resolveDependencyPath(
       dependencies,
       absolutePath,
@@ -64,59 +116,27 @@ export const resolveDependencies = async (
       const dependency = dependencies[i]
       const resolvedDependency = resolvedDependencies[i]
 
-      // 如果已经处理过，则不再处理
+      // Skip the handled dependencies.
       if (dependencySet.has(dependency)) {
         if (resolvedDependency != null)
           o.children.push(topoNodeMap.get(resolvedDependency)!)
         continue
       }
-
       dependencySet.add(dependency)
 
-      // 标准库
+      // Handle standard dependency.
       if (resolvedDependency == null) {
         standardDependencies.push(dependency)
         continue
       }
 
-      // 本地依赖，先递归解决依赖
-      const c = await collectDependencies(resolvedDependency)
+      // Recursively handling.
+      const c = await collect(resolvedDependency)
       o.children.push(c)
     }
     return o
   }
 
-  // 收集依赖树中的所有依赖
-  const o = await collectDependencies(absoluteSourcePath)
-  o.value = ''
-  const localDependencies: string[] = toposort(o)
-    .filter(u => u != '')
-    .reverse() // 按照依赖的拓扑顺序的逆序添加的本地依赖
-
-  let result = ''
-
-  // 按照依赖的拓扑序将代码拼接，并将源文件添加到末尾，使得生成的代码中出现在最下面
-  localDependencies.push(absoluteSourcePath)
-  for (const dependency of localDependencies) {
-    await ensureFileExist(dependency)
-    const content = await fs.readFile(dependency, { encoding })
-    const sourceItem = partition(content)
-    namespaces.push(...sourceItem.namespaces)
-    ;[...sourceItem.typedefs.entries()].forEach(([key, val]) =>
-      typedefs.set(key, val),
-    )
-    result += merge({ ...sourceItem, dependencies: [] }).concat('\n')
-  }
-
-  const sourceItem = partition(result)
-  namespaces.push(...sourceItem.namespaces)
-  ;[...sourceItem.typedefs.entries()].forEach(([key, val]) =>
-    typedefs.set(key, val),
-  )
-  return merge({
-    ...sourceItem,
-    dependencies: standardDependencies,
-    namespaces,
-    typedefs,
-  })
+  const o: TopoNode = await collect(absolutePath)
+  return o
 }

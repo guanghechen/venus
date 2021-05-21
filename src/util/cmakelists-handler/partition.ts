@@ -1,4 +1,4 @@
-import type { CMakeLists } from '.'
+import type { CMakeLists } from './types'
 
 /**
  * 匹配 include_directories 的正则表达式

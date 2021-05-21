@@ -1,5 +1,5 @@
 import { merge } from '@/util/source-handler/merge'
-import { partition } from '@/util/source-handler/partition'
+import { parse } from '@/util/source-handler/parse'
 
 // 匹配左侧包含无用的空格的正则表达式
 const getLeftSpacesRegex = (flags?: string): RegExp =>
@@ -12,7 +12,7 @@ const getRightSpacesRegex = (flags?: string): RegExp =>
 // 移除多余的空格
 export const handleRemoveSpaces = (content: string): string => {
   // 否则，清除源文件中的空白字符
-  const sourceItem = partition(content)
+  const sourceItem = parse(content)
   sourceItem.sources = sourceItem.sources
     .map(({ start, content }) => ({
       start,

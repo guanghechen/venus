@@ -1,7 +1,7 @@
 import { getDefaultCreateConfig } from '@/config'
-import { ensureDirectoryExists } from '@/util/fs-util'
+import { ensureDirectoryExists } from '@/util/fs'
 import { logger } from '@/util/logger'
-import { relativePath } from '@/util/path-util'
+import { relativePath } from '@/util/path'
 import { coverInteger, isArray, isString } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
 import path from 'path'
@@ -18,10 +18,8 @@ export default (
   getRawPartialConfig: (
     specifiedProjectLocatedPath?: string,
   ) => Promise<RawDefaultCreateConfig | undefined>,
-  getGlobalConfig: (
-    specifiedProjectLocatedPath?: string,
-  ) => Promise<GlobalConfig>,
-): any => {
+  getGlobalConfig: (specifiedProjectLocatedPath?: string) => GlobalConfig,
+): void => {
   program
     .command(`create [source...]`)
     .alias('new')
@@ -67,8 +65,7 @@ export default (
         }
 
         // 将 contest 转换为 sourceLists
-        const { executeDirectory, projectRootDirectory } =
-          await getGlobalConfig()
+        const { executeDirectory, projectRootDirectory } = getGlobalConfig()
         const rawDefaultConfig: RawDefaultCreateConfig | undefined =
           await getRawPartialConfig()
         const defaultConfig: DefaultCreateConfig =

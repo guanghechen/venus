@@ -1,4 +1,4 @@
-import { isFile } from '@/util/fs-util'
+import { isFile } from '@/util/fs'
 import path from 'path'
 import { partition } from './partition'
 

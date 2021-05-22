@@ -1,30 +1,40 @@
-import { yesOrNo } from '@/util/cli-util'
+import { yesOrNo } from '@/util/cli'
+import { isExists } from '@/util/fs'
 import { logger } from '@/util/logger'
+import { relativePath } from '@/util/path'
 import fs from 'fs-extra'
-import path from 'path'
 import type { GlobalConfig } from '@/command'
-import type { GenerateConfig } from '.'
+import type { GenerateConfig } from './types'
 
-// 将内容复制到输出到文件
-export const handleSave = async (
+/**
+ * Save the contents into an external file.
+ *
+ * @param globalConfig
+ * @param resolvedConfig
+ * @param content
+ */
+async function handleSave(
   globalConfig: GlobalConfig,
   resolvedConfig: GenerateConfig,
   content: string,
-): Promise<void> => {
+): Promise<void> {
+  if (resolvedConfig.absoluteOutputPath == null) return
   const { executeDirectory, projectRootDirectory, encoding } = globalConfig
 
-  // 相对于执行命令所在的路径的相对路径，用于友好的提示
-  const relativeOutputPath = executeDirectory.startsWith(projectRootDirectory)
-    ? path.relative(executeDirectory, resolvedConfig.absoluteOutputPath)
-    : resolvedConfig.absoluteOutputPath
+  // Use relative path for a friendly hint.
+  const relativeOutputPath = relativePath(
+    resolvedConfig.absoluteOutputPath,
+    executeDirectory,
+    projectRootDirectory,
+  )
 
-  if (
-    fs.existsSync(resolvedConfig.absoluteOutputPath!) &&
-    !resolvedConfig.force
-  ) {
+  if (!resolvedConfig.force && isExists(resolvedConfig.absoluteOutputPath)) {
     const confirm: boolean = await yesOrNo(`overwrite ${relativeOutputPath}`)
     if (!confirm) return
   }
+
   await fs.writeFile(resolvedConfig.absoluteOutputPath, content, encoding)
   logger.info(`written into ${relativeOutputPath}.`)
 }
+
+export default handleSave

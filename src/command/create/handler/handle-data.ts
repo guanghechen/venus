@@ -1,6 +1,6 @@
-import { isFile } from '@/util/fs-util'
+import { isFile } from '@/util/fs'
 import { logger } from '@/util/logger'
-import { relativePath } from '@/util/path-util'
+import { relativePath } from '@/util/path'
 import { merge } from '@/util/source-handler/merge'
 import { parse } from '@/util/source-handler/parse'
 import fs from 'fs-extra'

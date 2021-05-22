@@ -1,4 +1,4 @@
-import { ensureFileExists } from '@/util/fs-util'
+import { ensureFileExists } from '@/util/fs'
 import { logger } from '@/util/logger'
 import { toposort } from '@/util/topo-sort'
 import { isNonBlankString } from '@guanghechen/option-helper'

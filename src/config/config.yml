@@ -19,18 +19,3 @@ create:
     filename: data.in
   # 比赛的类型/特征描述：如 codeforces、bestcoder 等
   categories:
-
-# default options to sub-command 'register'
-register:
-  recursive: false
-
-# default options to sub-command 'remove'
-remove:
-  recursive: false
-  force: false
-
-# default options to sub-command 'clean'
-clean:
-  recursive: false
-  force: false
-  patterns: []

@@ -1,5 +1,5 @@
 import loadCommand from '@/command'
-import { doneWithClose } from '@/util/cli-util'
+import { doneWithClose } from '@/util/cli'
 import { registerCommanderOptions } from '@barusu/chalk-logger'
 import program from 'commander'
 import manifest from '../package.json'

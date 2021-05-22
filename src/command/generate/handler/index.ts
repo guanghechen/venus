@@ -1,48 +1,26 @@
-import { handleRemoveAsserts } from '@/command/generate/handler/handle-remove-asserts'
 import { resolveLocalDependencyPath } from '@/util/cmakelists-handler/dependency'
-import { ensureFileExists } from '@/util/fs-util'
+import { ensureFileExists } from '@/util/fs'
 import { resolveDependencies } from '@/util/source-handler/dependency'
-import { coverBoolean } from '@guanghechen/option-helper'
+import {
+  coverBoolean,
+  coverString,
+  isNonBlankString,
+} from '@guanghechen/option-helper'
 import fs from 'fs-extra'
 import path from 'path'
 import type { GlobalConfig } from '@/command'
 import type { DefaultGenerateConfig } from '@/config/generate'
-import { handleCopy } from './handle-copy'
-import { handleRemoveComments } from './handle-remove-comments'
-import { handleRemoveDefinition } from './handle-remove-definitions'
-import { handleRemoveFreopen } from './handle-remove-freopens'
-import { handleRemoveSpaces } from './handle-remove-spaces'
-import { handleSave } from './handle-save'
-
-interface GenerateArgument {
-  readonly sourcePath: string
-  readonly targetPath?: string
-}
-
-interface GenerateOption {
-  readonly removeComments?: boolean
-  readonly removeSpaces?: boolean
-  readonly removeFreopen?: boolean
-  readonly removeAssert?: boolean
-  readonly uglify?: boolean
-  readonly force?: boolean
-  readonly copy?: boolean
-  readonly outputDirectory?: string
-}
-
-export interface GenerateConfig {
-  readonly removeComments: boolean
-  readonly removeSpaces: boolean
-  readonly removeFreopen: boolean
-  readonly removeAssert: boolean
-  readonly force: boolean
-  readonly copy: boolean
-  readonly absoluteSourcePath: string
-  readonly absoluteOutputPath: string
-}
+import handleCopy from './handle-copy'
+import handleRemoveAsserts from './handle-remove-asserts'
+import handleRemoveComments from './handle-remove-comments'
+import handleRemoveDefinition from './handle-remove-definitions'
+import handleRemoveFreopen from './handle-remove-freopens'
+import handleRemoveSpaces from './handle-remove-spaces'
+import handleSave from './handle-save'
+import type { GenerateArgument, GenerateConfig, GenerateOption } from './types'
 
 export class GenerateHandler {
-  private readonly config: Promise<GenerateConfig>
+  private readonly config: GenerateConfig
   private readonly resolvedGlobalConfig: GlobalConfig
 
   constructor(
@@ -56,16 +34,14 @@ export class GenerateHandler {
   }
 
   public async handle(): Promise<void> {
+    const resolvedConfig = this.config
     const { projectRootDirectory, cmakeLists, encoding } =
       this.resolvedGlobalConfig
-    const resolvedConfig = await this.config
 
     let content: string
 
-    // 解决依赖
-    const cmakeListsContent = await fs.readFile(cmakeLists.filepath, {
-      encoding,
-    })
+    // Resolve dependencies.
+    const cmakeListsContent = await fs.readFile(cmakeLists.filepath, encoding)
     content = await resolveDependencies(
       (dependencies: string[], absoluteSourcePath: string) => {
         return resolveLocalDependencyPath(
@@ -79,60 +55,62 @@ export class GenerateHandler {
       encoding,
     )
 
-    // 移除 freopen
+    // Remove freopen statements.
     if (resolvedConfig.removeFreopen) {
       content = handleRemoveFreopen(content)
       content = handleRemoveDefinition(content)
     }
 
-    // 移除 assert
+    // Remove assert statements.
     if (resolvedConfig.removeAssert) {
       content = handleRemoveAsserts(content)
     }
 
-    // 压缩
+    // Uglify / Compress.
     if (resolvedConfig.removeComments) content = handleRemoveComments(content)
     if (resolvedConfig.removeSpaces) content = handleRemoveSpaces(content)
     else content = content.trim().concat('\n')
 
-    // 复制到系统剪切板
+    // Copy into system clipboard.
     if (resolvedConfig.copy) {
       await handleCopy(content)
-      return
     }
 
-    // 输出到文件
-    await handleSave(this.resolvedGlobalConfig, resolvedConfig, content)
+    // Save to external file.
+    if (resolvedConfig.absoluteOutputPath != null) {
+      await handleSave(this.resolvedGlobalConfig, resolvedConfig, content)
+    }
   }
 
   /**
-   * 预处理，通过命令的参数、选项、默认配置得到最终需要的配置
+   * Preprocess options.
    *
-   * @param argument        命令的参数
-   * @param option          命令的选项
-   * @param defaultConfig   默认配置
+   * @param argument        props from command line
+   * @param option          props from program options
+   * @param defaultConfig   props from default config
    */
-  private async preprocess(
+  protected preprocess(
     argument: GenerateArgument,
     option: GenerateOption,
     defaultConfig: DefaultGenerateConfig,
-  ): Promise<GenerateConfig> {
+  ): GenerateConfig {
     const { projectRootDirectory, executeDirectory } = this.resolvedGlobalConfig
     const absoluteSourcePath = path.resolve(
       executeDirectory,
       argument.sourcePath,
     )
 
-    // 确保源文件是否存在
+    // Ensure the source filepath is existed.
     ensureFileExists(absoluteSourcePath)
+
+    const uglify = coverBoolean(false, option.uglify)
 
     const config: GenerateConfig = {
       removeComments:
-        coverBoolean(defaultConfig.removeComments, option.removeComments) ||
-        !!option.uglify,
+        uglify ||
+        coverBoolean(defaultConfig.removeComments, option.removeComments),
       removeSpaces:
-        coverBoolean(defaultConfig.removeSpaces, option.removeSpaces) ||
-        !!option.uglify,
+        uglify || coverBoolean(defaultConfig.removeSpaces, option.removeSpaces),
       removeFreopen: coverBoolean(
         defaultConfig.removeFreopen,
         option.removeFreopen,
@@ -144,22 +122,32 @@ export class GenerateHandler {
       force: coverBoolean(defaultConfig.force, option.force),
       copy: coverBoolean(defaultConfig.copy, option.copy),
       absoluteSourcePath,
-      absoluteOutputPath: '',
+      absoluteOutputPath: null,
     }
 
-    if (config.copy) return config
+    /**
+     * If the `copy` option computed to `true`, and no outputDirectory specified
+     * explicitly, then only the `copy to system clipboard` action will
+     * be performed.
+     */
+    if (config.copy && option.outputDirectory == null) return config
 
-    // 如果指定了 outputDirectory，则以项目的根目录为参考路径；否则以执行命令所在的路径为参考路径
+    /**
+     * If outputDirectory specified, then the root directory of the project will
+     * used as a reference path, otherwise, the `cwd` will play this role.
+     */
     const outputDirectory: string = option.outputDirectory
       ? path.resolve(projectRootDirectory, option.outputDirectory)
       : path.resolve(executeDirectory)
 
-    // 添加文件
-    let { targetPath } = argument
     const { dir, base, ext } = path.parse(absoluteSourcePath)
-    if (!targetPath) targetPath = path.resolve(dir, '_venus_' + base)
+    let targetPath = coverString(
+      path.resolve(dir, '_venus_' + base),
+      argument.targetPath,
+      isNonBlankString,
+    )
 
-    // 保证后缀名和源文件一致
+    // Ensure the extname of target file is same with the one of the source file.
     if (!targetPath.endsWith(ext)) targetPath += ext
 
     const absoluteOutputPath = path.resolve(outputDirectory, targetPath)

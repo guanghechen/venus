@@ -1,4 +1,4 @@
-import { ensureFileExists } from '@/util/fs-util'
+import { ensureFileExists } from '@/util/fs'
 import fs from 'fs-extra'
 
 export const handleTemplate = async (

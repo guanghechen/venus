@@ -1,6 +1,6 @@
-import { yesOrNo } from '@/util/cli-util'
+import { yesOrNo } from '@/util/cli'
 import { logger } from '@/util/logger'
-import { relativePath } from '@/util/path-util'
+import { relativePath } from '@/util/path'
 import { coverBoolean, coverString } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
 import path from 'path'
@@ -53,7 +53,6 @@ export class CreateHandler {
       executeDirectory,
       projectRootDirectory,
       definitionPhase,
-      cmakeLists,
       encoding,
     } = this.resolvedGlobalConfig
     const resolvedConfig = await this.config

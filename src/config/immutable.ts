@@ -48,7 +48,7 @@ export const projectConfig = {
   get definitionPhase(): any {
     return immutableRawConfig.project['definition-phase']
   },
-  get encoding(): string {
+  get encoding(): BufferEncoding {
     return immutableRawConfig.project.encoding
   },
   get cmakeLists(): { filename: string; encoding: string } {

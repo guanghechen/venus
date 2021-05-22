@@ -1,26 +1,23 @@
 /**
- * 获取使用 definition 的代码段，匹配
+ * Match a definition declaration, such as:
  *
+ * ```cpp
  * #ifdef xxx
  * #else
  * #endif
+ * ```
  */
-const getDefinitionRegex = (flags?: string): RegExp =>
-  new RegExp(
-    /#ifdef\s*?\w*\s*?\n\s*(?:#else)?\s*?\n#endif(?:[^\n]*?)\n+/,
-    flags,
-  )
-const getVenusDefinitionRegex = (flags?: string): RegExp =>
-  new RegExp(
-    /#ifndef\s*?(VENUS\w*)\s*?\n\s*#define\s*?\1\n([^]*?)#endif(?:[^\n]*?)\n+/,
-    flags,
-  )
+const definitionRegex =
+  /#ifdef\s*?\w*\s*?\n\s*(?:#else)?\s*?\n#endif(?:[^\n]*?)\n+/gu
 
-// 移除 freopen
-export const handleRemoveDefinition = (content: string): string => {
-  const definitionRegex = getDefinitionRegex('g')
-  const venuesDefinitionRegex = getVenusDefinitionRegex('g')
+const venusDefinitionRegex =
+  /#ifndef\s*?(VENUS\w*)\s*?\n\s*#define\s*?\1\n([^]*?)#endif(?:[^\n]*?)\n+/gu
+
+// Remove definition declarations.
+function handleRemoveDefinition(content: string): string {
   return content
     .replace(definitionRegex, '')
-    .replace(venuesDefinitionRegex, '$2')
+    .replace(venusDefinitionRegex, '$2')
 }
+
+export default handleRemoveDefinition

@@ -1,6 +1,6 @@
 import { getPartialRawConfig } from '@/config'
 import { projectConfig } from '@/config/immutable'
-import { ensureFileExists, findNearestTarget } from '@/util/fs-util'
+import { ensureFileExists, findNearestTarget } from '@/util/fs'
 import { logger } from '@/util/logger'
 import { coverString } from '@guanghechen/option-helper'
 import path from 'path'
@@ -13,7 +13,7 @@ export interface GlobalConfig {
   readonly executeDirectory: string
   readonly projectRootDirectory: string
   readonly definitionPhase: string
-  readonly encoding: string
+  readonly encoding: BufferEncoding
   readonly cmakeLists: {
     readonly encoding: string
     readonly filepath: string
@@ -73,10 +73,9 @@ export default (program: commander.Command & any): void => {
    *
    * @param specifiedProjectLocatedPath   该值为绝对路径时才生效，从指定的地方搜索 CMakeLists.txt
    */
-  async function getGlobalConfig(
-    specifiedProjectLocatedPath?: string,
-  ): Promise<GlobalConfig> {
+  function getGlobalConfig(specifiedProjectLocatedPath?: string): GlobalConfig {
     const { definitionPhase, cmakeLists, encoding } = projectConfig
+
     const cmakeListsFileName = coverString(
       cmakeLists.filename,
       program.cmakeLists,
@@ -95,11 +94,8 @@ export default (program: commander.Command & any): void => {
       )
     const absoluteCmakeListsPath =
       specifiedProjectLocatedPath != null
-        ? await findNearestTarget(
-            specifiedProjectLocatedPath,
-            cmakeListsFileName,
-          )
-        : await findNearestTarget(executeDirectory, cmakeListsFileName)
+        ? findNearestTarget(specifiedProjectLocatedPath, cmakeListsFileName)
+        : findNearestTarget(executeDirectory, cmakeListsFileName)
 
     // 确保 CMakeLists.txt 存在
     ensureFileExists(

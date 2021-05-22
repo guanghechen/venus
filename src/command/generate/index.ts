@@ -13,10 +13,8 @@ export default (
   getRawPartialConfig: (
     specifiedProjectLocatedPath?: string,
   ) => Promise<RawDefaultGenerateConfig | undefined>,
-  getGlobalConfig: (
-    specifiedProjectLocatedPath?: string,
-  ) => Promise<GlobalConfig>,
-): any => {
+  getGlobalConfig: (specifiedProjectLocatedPath?: string) => GlobalConfig,
+): void => {
   program
     .command(`generate <source> [target]`)
     .alias('g')
@@ -40,9 +38,7 @@ export default (
     .action(
       async (sourcePath: string, targetPath: string | undefined, option) => {
         const projectReferencePath = path.dirname(sourcePath)
-        const globalConfig: GlobalConfig = await getGlobalConfig(
-          projectReferencePath,
-        )
+        const globalConfig: GlobalConfig = getGlobalConfig(projectReferencePath)
         const rawDefaultConfig: RawDefaultGenerateConfig | undefined =
           await getRawPartialConfig(projectReferencePath)
         const defaultConfig: DefaultGenerateConfig =

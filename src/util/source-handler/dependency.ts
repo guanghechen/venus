@@ -1,11 +1,53 @@
-import { ensureFileExists } from '@/util/fs'
-import { logger } from '@/util/logger'
-import { toposort } from '@/util/topo-sort'
 import { isNonBlankString } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
-import type { TopoNode } from '@/util/topo-sort'
+import path from 'path'
+import { ensureFileExists, isFile } from '../fs'
+import { logger } from '../logger'
+import { toposort } from '../topo-sort'
 import merge from './merge'
 import parse from './parse'
+import type { TopoNode } from '../topo-sort'
+
+export function resolveLocalDependencyPath(
+  dependencies: string[],
+  absoluteSourcePath: string,
+  workspace: string,
+  includes: string[],
+): Array<string | null> {
+  const absoluteSourceDirectory = path.dirname(absoluteSourcePath)
+  const resolvedDependencies: Array<string | null> = []
+
+  for (const dependency of dependencies) {
+    let resolvedDependency: string | null = null
+
+    // 尝试用 CMakeLists.txt 中定义的依赖的路径为参考路径
+    for (let i = 0; i < includes.length; ++i) {
+      const absoluteDependencyPath = path.resolve(
+        workspace,
+        includes[i],
+        dependency,
+      )
+      if (isFile(absoluteDependencyPath)) {
+        resolvedDependency = absoluteDependencyPath
+        break
+      }
+    }
+
+    // 否则尝试以源文件所在路径为参考路径
+    if (resolvedDependency == null) {
+      const absoluteDependencyPath = path.resolve(
+        absoluteSourceDirectory,
+        dependency,
+      )
+      if (isFile(absoluteDependencyPath)) {
+        resolvedDependency = absoluteDependencyPath
+      }
+    }
+
+    resolvedDependencies.push(resolvedDependency)
+  }
+  return resolvedDependencies
+}
 
 /**
  * Replace the local dependencies with the referenced source contents
@@ -19,7 +61,7 @@ export async function resolveDependencies(
   resolveDependencyPath: (
     dependencies: string[],
     absoluteSourcePath: string,
-  ) => Promise<Array<string | null>>,
+  ) => Array<string | null>,
   absoluteSourcePath: string,
   encoding: string,
 ): Promise<string> {
@@ -28,7 +70,7 @@ export async function resolveDependencies(
   const typedefs: Map<string, string> = new Map<string, string>()
 
   // Collect dependencies.
-  const o = await collectDependencies(
+  const o: TopoNode = await collectDependencies(
     resolveDependencyPath,
     absoluteSourcePath,
     encoding,
@@ -82,7 +124,7 @@ async function collectDependencies(
   resolveDependencyPath: (
     dependencies: string[],
     absoluteSourcePath: string,
-  ) => Promise<Array<string | null>>,
+  ) => Array<string | null>,
   absolutePath: string,
   encoding: string,
   standardDependencies: string[],
@@ -96,7 +138,7 @@ async function collectDependencies(
     const dependencies = parse(content).dependencies.filter(isNonBlankString)
 
     // Calc the absolute dependency path
-    const resolvedDependencies = await resolveDependencyPath(
+    const resolvedDependencies = resolveDependencyPath(
       dependencies,
       absolutePath,
     )

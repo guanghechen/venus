@@ -1,5 +1,5 @@
-import { languageConfig } from '@/config/immutable'
-import { logger } from '@/util/logger'
+import { languageConfig } from '@/env/constant'
+import { logger } from '../logger'
 import type { SourceItem, SourcePiece } from './types'
 
 // Match dependency list.
@@ -133,7 +133,7 @@ function matchBlockComment(
  * @param content
  */
 export function parse(content: string): SourceItem {
-  const { macroMark, quoteMark, inlineCommentMark, blockCommentMark } =
+  const { macroMarker, quoteMarker, inlineCommentMarker, blockCommentMarker } =
     languageConfig
   const macros: SourcePiece[] = []
   const sources: SourcePiece[] = []
@@ -148,14 +148,14 @@ export function parse(content: string): SourceItem {
     let sourcePiece: SourcePiece | null = null
 
     // Try to match macro declaration
-    if (sourcePiece == null && content.startsWith(macroMark, i)) {
+    if (sourcePiece == null && content.startsWith(macroMarker, i)) {
       sourcePiece = matchMacro(content, i)
       macros.push(sourcePiece)
     }
 
     // Try to match literal contents
     if (sourcePiece == null) {
-      for (const quote of quoteMark) {
+      for (const quote of quoteMarker) {
         if (content.startsWith(quote, i)) {
           sourcePiece = matchLiteral(content, i)
           literals.push(sourcePiece)
@@ -164,14 +164,14 @@ export function parse(content: string): SourceItem {
     }
 
     // Try to match inline comments
-    if (sourcePiece == null && content.startsWith(inlineCommentMark, i)) {
-      sourcePiece = matchInlineComment(content, i, inlineCommentMark)
+    if (sourcePiece == null && content.startsWith(inlineCommentMarker, i)) {
+      sourcePiece = matchInlineComment(content, i, inlineCommentMarker)
       comments.push(sourcePiece)
     }
 
     // Try to match block comments
-    if (sourcePiece == null && content.startsWith(blockCommentMark[0], i)) {
-      sourcePiece = matchBlockComment(content, i, blockCommentMark)
+    if (sourcePiece == null && content.startsWith(blockCommentMarker[0], i)) {
+      sourcePiece = matchBlockComment(content, i, blockCommentMarker)
       comments.push(sourcePiece)
     }
 

@@ -1,12 +1,10 @@
-import loadCommand from '@/command'
-import { registerCommanderOptions } from '@barusu/chalk-logger'
-import program from 'commander'
-import manifest from '../package.json'
+import './env/constant'
 
-program.version(manifest.version)
-
-registerCommanderOptions(program)
-
-loadCommand(program)
-
-program.parse(process.argv)
+export * from './command/generate'
+export * from './core/command'
+export * from './core/option'
+export * from './core/generate/command'
+export * from './core/generate/context'
+export * from './core/generate/processor'
+export * from './env/constant'
+export * from './env/logger'

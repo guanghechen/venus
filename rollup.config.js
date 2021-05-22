@@ -1,47 +1,24 @@
-import createRollupConfig from '@guanghechen/rollup-config'
+import createRollupConfig from '@guanghechen/rollup-config-cli'
 import manifest from './package.json'
 
-process.env.ROLLUP_SHOULD_SOURCEMAP = false
-
 async function rollupConfig() {
-  const config = [
-    createRollupConfig({
-      manifest,
-      pluginOptions: {
-        commonjsOptions: {
-          sourceMap: false,
+  const config = createRollupConfig({
+    manifest,
+    pluginOptions: {
+      typescriptOptions: { tsconfig: 'tsconfig.src.json' },
+    },
+    resources: {
+      copyOnce: true,
+      verbose: true,
+      targets: [
+        {
+          src: 'src/resources',
+          dest: 'lib/resources',
         },
-        typescriptOptions: {
-          tsconfig: 'tsconfig.src.json',
-          tsconfigOverride: {
-            compilerOptions: {
-              removeComments: false,
-              emitDeclarationOnly: true,
-            },
-          },
-        },
-      },
-    }),
-    createRollupConfig({
-      manifest,
-      pluginOptions: {
-        commonjsOptions: {
-          sourceMap: false,
-        },
-        typescriptOptions: {
-          tsconfig: 'tsconfig.src.json',
-          tsconfigOverride: {
-            compilerOptions: {
-              declaration: false,
-              declarationMap: false,
-              declarationDir: null,
-              removeComments: true,
-            },
-          },
-        },
-      },
-    }),
-  ]
+      ],
+    },
+    targets: [{ src: 'src/cli.ts', target: 'lib/cjs/cli.js' }],
+  })
   return config
 }
 

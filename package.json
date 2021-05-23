@@ -29,7 +29,9 @@
     "postinstall:main": "yarn update:lock",
     "postinstall:dev": "is-ci || husky install",
     "postpublish": "pinst --enable",
-    "test": "cross-env TS_NODE_FILES=true jest --config ./jest.config.js --rootDir .",
+    "rebuild": "yarn clean && yarn build",
+    "test": "lerna exec --concurrency 1 'npm run test --if-present'",
+    "update:changelog": "gitmoji-changelog update",
     "update:lock": "yarn-deduplicate"
   },
   "workspaces": [
@@ -53,6 +55,8 @@
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-jest": "24.3.6",
     "eslint-plugin-prettier": "3.4.0",
+    "fs-extra": "^10.0.0",
+    "gitmoji-changelog": "^2.2.0",
     "husky": "6.0.0",
     "is-ci": "3.0.0",
     "jest": "26.6.3",

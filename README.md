@@ -105,6 +105,55 @@ Commands:
   help [command]                                    display help for command
 ```
 
+### Sub-command `init`
+
+* Overview
+
+  ```bash
+  $ venus init --help
+  Usage: venus-acm init|i [options] <workspace>
+
+  Options:
+    --plop-bypass <plopBypass>  bypass array to plop (default: [])
+    -h, --help                  display help for command
+  ```
+
+  - Arguments
+
+    - `<workspace>`: location of the cpp project root dir.
+
+* Example
+
+  ```bash
+  $ venus init acm-cpp
+  ```
+
+  Then, a directory named `acm-cpp` with structure like below will be created:
+
+  ```bash
+  acm-cpp
+    ├── .vscode
+    │   └── settings.jsonp
+    ├── oj
+    │   └── fake
+    │       └── 01.cpp
+    ├── script
+    │   └── run.js
+    ├── src
+    │   └── @guanghechen
+    │       └── algorithm
+    │           └── match-first.hpp
+    ├── .clang-format
+    ├── .editorconfig
+    ├── .eslintignore
+    ├── .eslintrc
+    ├── .gitignore
+    ├── .prettierignore
+    ├── .prettierrc
+    ├── CMakeLists.txt
+    └── package.json
+  ```
+
 ### Sub-command `generate`
 
 ```bash
@@ -131,12 +180,11 @@ Options:
 
 * Options
 
-## Example
-
-### generate
-
-* Generate codes into a single cpp source file.
+* Example
 
   ```bash
-  venus generate oj/fake/01.cpp --output venus.cpp
+  venus generate oj/fake/01.cpp --output venus.cpp --copy
   ```
+
+  Then, the generated code will be copied to the system clipboard and saved into
+  `venus.cpp`.

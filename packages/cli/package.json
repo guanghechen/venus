@@ -48,12 +48,10 @@
     "@barusu/util-cli": "^0.2.0",
     "@guanghechen/locate-helper": "^1.5.1",
     "@guanghechen/option-helper": "^1.5.1",
-    "chalk": "^4.1.1",
     "clipboardy": "^2.3.0",
     "commander": "^7.2.0",
     "fs-extra": "^10.0.0",
     "inquirer": "^8.1.0",
-    "js-yaml": "^4.1.0",
-    "minimatch": "^3.0.4"
+    "js-yaml": "^4.1.0"
   }
 }

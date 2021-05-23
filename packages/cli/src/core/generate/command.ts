@@ -19,7 +19,6 @@ import path from 'path'
 import { packageName } from '../../env/constant'
 import logger from '../../env/logger'
 import { ensureFileExists } from '../../util/fs'
-import { isUnderThePath } from '../../util/path'
 import {
   __defaultGlobalCommandOptions,
   resolveGlobalCommandOptions,
@@ -146,7 +145,7 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
             options,
           )
 
-        const { cwd, workspace } = defaultOptions
+        const { workspace } = defaultOptions
 
         // resolve includes
         const includes = cover<string[]>(

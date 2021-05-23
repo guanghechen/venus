@@ -47,7 +47,7 @@ export function toposort(node: TopoNode): string[] {
     const u: TopoNode = nodeMap.get(x)!
     for (const v of u.children) {
       du.set(v.value, du.get(v.value)! - 1)
-      if (du.get(v.value) == 0) q.push(v.value)
+      if (du.get(v.value) === 0) q.push(v.value)
     }
   }
 

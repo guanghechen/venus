@@ -79,7 +79,7 @@ export async function resolveDependencies(
 
   o.value = ''
   const localDependencies: string[] = toposort(o)
-    .filter(u => u != '')
+    .filter(isNonBlankString)
     .reverse() // 按照依赖的拓扑顺序的逆序添加本地的依赖
 
   let result = ''

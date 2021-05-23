@@ -10,10 +10,10 @@ export {
 export const COMMAND_NAME = 'venus-acm'
 
 // Config files root dir
-export const configRootDir = path.resolve(__dirname, '../config')
+export const resourceDir = path.resolve(__dirname, '../resources')
 
 // Template files root dir
-export const templateRootDir = path.join(configRootDir, 'templates')
+export const templateRootDir = path.join(resourceDir, 'boilerplate')
 
 /**
  * Config of C++ language

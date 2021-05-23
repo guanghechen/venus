@@ -13,8 +13,8 @@ async function rollupConfig() {
       verbose: true,
       targets: [
         {
-          src: 'src/resources',
-          dest: 'lib/resources',
+          src: 'src/resources/',
+          dest: 'lib/',
         },
       ],
     },

@@ -1,0 +1,75 @@
+#! /usr/bin/env node
+
+const chalk = require('chalk')
+const { spawn } = require('child_process')
+const fs = require('fs-extra')
+const minimist = require('minimist')
+const path = require('path')
+
+const workspaceRoot = path.join(__dirname, '..')
+const sourceRoot = path.join(workspaceRoot, 'src')
+
+/**
+ * Print usage information strings.
+ */
+function usage() {
+  const [arg1, arg2] = process.argv
+  console.log(`${arg1} ${arg2} <cpp source file>`)
+}
+
+/**
+ * Compile and run a cpp file.
+ *
+ * @param {string} filename
+ * @param {{ verbose: boolean }} options
+ */
+function compileAndRun(filepath, options) {
+  const { dir, base: filename, name, ext } = path.parse(filepath)
+  const executableFilepath = path.join(dir, name)
+  const problemId = /^\d+/.test(name) ? /^(\d+)/.exec(name)[1] : null
+
+  if (ext !== '.cpp') {
+    console.log(chalk.yellow('Cannot handle `ext` type file.'))
+    return
+  }
+
+  const command = [
+    `cd ${dir}`,
+    `g++ -std=c++11 -I '${sourceRoot}' '${filename}' -o '${name}'`,
+    `./${name}`,
+  ].join(' && ')
+
+  if (options.verbose) console.log(chalk.green(command))
+  const child = spawn(command, { shell: true })
+
+  const dataFilepath = path.join(dir, 'data', `${problemId}.in`)
+  if (fs.existsSync(dataFilepath)) {
+    const stream = fs.createReadStream(dataFilepath, 'utf-8')
+    stream.pipe(child.stdin)
+  } else {
+    process.stdin.pipe(child.stdin)
+  }
+
+  child.stdout.pipe(process.stdout)
+  child.stderr.pipe(process.stdout)
+
+  // handling CTRL + C
+  child.on('exit', () => void fs.unlinkSync(executableFilepath))
+}
+
+function run() {
+  const [, , ...argv] = process.argv
+  const args = minimist(argv)
+
+  const target = args._[0]
+  if (target === null) {
+    usage()
+    return
+  }
+
+  compileAndRun(path.resolve(process.cwd(), target), {
+    verbose: Boolean(args.verbose),
+  })
+}
+
+run()

@@ -1,0 +1,14 @@
+{
+  "root": true,
+  "extends": ["@guanghechen", "prettier"],
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "extends": ["@guanghechen", "@guanghechen/ts", "prettier"]
+    }
+  ]
+}

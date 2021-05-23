@@ -1,0 +1,17 @@
+{
+  "cSpell.words": [
+    "parens"
+  ],
+  "code-runner.executorMap": {
+    "cpp": "yarn run:cpp $fullFileName && venus generate $fullFileNam"
+  },
+  "C_Cpp.default.includePath": [
+    "${workspaceFolder}/src",
+    "/usr/include/c++/10/",
+    "/usr/local/include/",
+    "/usr/include/"
+  ],
+  "files.associations": {
+    ".prettierrc": "yaml"
+  }
+}

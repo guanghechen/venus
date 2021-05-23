@@ -4,9 +4,9 @@ import path from 'path'
 import logger from '../../env/logger'
 import { ensureFileExists, isFile } from '../fs'
 import { toposort } from '../topo-sort'
+import type { TopoNode } from '../topo-sort'
 import merge from './merge'
 import parse from './parse'
-import type { TopoNode } from '../topo-sort'
 
 export function resolveLocalDependencyPath(
   dependencies: string[],

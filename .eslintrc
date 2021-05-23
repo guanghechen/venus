@@ -1,6 +1,6 @@
 {
   "root": true,
-  "extends": ["@guanghechen", "prettier"],
+  "extends": ["@guanghechen", "@guanghechen/jsx", "prettier"],
   "env": {
     "browser": true,
     "commonjs": true,

@@ -1,7 +1,8 @@
 import createRollupConfig from '@guanghechen/rollup-config-cli'
-import manifest from './package.json'
+import path from 'path'
 
 async function rollupConfig() {
+  const { default: manifest } = await import(path.resolve('package.json'))
   const config = createRollupConfig({
     manifest,
     pluginOptions: {

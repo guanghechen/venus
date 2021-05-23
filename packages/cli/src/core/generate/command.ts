@@ -1,4 +1,9 @@
 import { Command } from '@barusu/util-cli'
+import type {
+  CommandConfigurationFlatOpts,
+  SubCommandCreator,
+  SubCommandProcessor,
+} from '@barusu/util-cli'
 import {
   locateLatestPackageJson,
   locateNearestFilepath,
@@ -11,11 +16,6 @@ import {
 } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
 import path from 'path'
-import type {
-  CommandConfigurationFlatOpts,
-  SubCommandCreator,
-  SubCommandProcessor,
-} from '@barusu/util-cli'
 import { packageName } from '../../env/constant'
 import logger from '../../env/logger'
 import { ensureFileExists } from '../../util/fs'

@@ -1,10 +1,10 @@
 import { resolveCommandConfigurationOptions } from '@barusu/util-cli'
-import { cover, isNonBlankString } from '@guanghechen/option-helper'
 import type {
   CommandConfigurationFlatOpts,
   CommandConfigurationOptions,
   MergeStrategy,
 } from '@barusu/util-cli'
+import { cover, isNonBlankString } from '@guanghechen/option-helper'
 import logger from '../env/logger'
 
 /**

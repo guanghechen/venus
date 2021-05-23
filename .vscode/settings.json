@@ -15,7 +15,9 @@
     "ifndef",
     "pinst",
     "postpublish",
+    "prebuild",
     "toposort",
+    "tsbuildinfo",
     "typedefs",
     "whitespaces"
   ]

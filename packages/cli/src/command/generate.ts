@@ -11,9 +11,9 @@ import {
   createGenerateContextFromOptions,
   createSubCommandGenerate,
 } from '../core/generate/command'
-import GenerateProcessor from '../core/generate/processor'
 import type { SubCommandGenerateOptions } from '../core/generate/command'
 import type { GenerateContext } from '../core/generate/context'
+import GenerateProcessor from '../core/generate/processor'
 
 /**
  * Process sub-command: 'generate'

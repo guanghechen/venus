@@ -1,4 +1,20 @@
 {
   "extends": "./tsconfig.settings",
-  "include": ["src", "__test__"]
+  "compilerOptions": {
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "venus-acm": ["./packages/cli/src"]
+    }
+  },
+  "exclude": [
+    "**/__tmp__/**",
+    "**/coverage/**",
+    "**/demo/**",
+    "**/doc/**",
+    "**/lib/**",
+    "**/node_modules/**",
+    "*.tsbuildinfo",
+    "**/__test__/fixtures/**"
+  ]
 }

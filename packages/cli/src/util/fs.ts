@@ -51,18 +51,3 @@ export function ensureFileExists(
   if (fs.statSync(filepath!).isFile()) return
   throw new ReferenceError(message ?? `${filepath} is not a file path.`)
 }
-
-/**
- * Ensure the given filepath exists and it is a directory path.
- * Otherwise, an exception will be thrown.
- * @param filepath
- * @param message
- */
-export function ensureDirectoryExists(
-  filepath: string | null,
-  message?: string,
-): void | never {
-  ensureExists(filepath, message)
-  if (fs.statSync(filepath!).isDirectory()) return
-  throw new ReferenceError(message ?? `${filepath} is not a directory path.`)
-}

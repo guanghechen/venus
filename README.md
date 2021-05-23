@@ -161,14 +161,21 @@ $ venus generate --help
 Usage: venus-acm generate|g [options] <source filepath> [output filepath]
 
 Options:
-  --rc, --remove-comments               remove comments
-  --rs, --remove-spaces                 remove spaces
-  --rf, --remove-freopen                remove freopen statements
-  --ra, --remove-assert                 remove assert statements
-  -I, --include <include_directory...>  include directories
+  --remove-comments                     remove comments
+  --no-remove-comments
+  --remove-spaces                       remove spaces
+  --no-remove-spaces
+  --remove-freopen                      remove freopen statements
+  --no-remove-freopen
+  --remove-assert                       remove assert statements
+  --no-remove-assert
   -u, --uglify                          shortcut of --rc --rs.
+  --no-uglify
   -c, --copy                            write generated code into system clipboard
+  --no-copy
   -f, --force                           force write the generated code into output filepath
+  --no-force
+  -I, --include <include_directory...>  include directories
   -o, --output <output filepath>        specify the output filepath
   -h, --help                            display help for command
 ```

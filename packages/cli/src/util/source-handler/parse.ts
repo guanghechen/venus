@@ -213,8 +213,7 @@ export function parse(content: string): SourceItem {
 
   const isNotEmptyPiece = (sourcePiece: SourcePiece): boolean =>
     sourcePiece.content.length > 0
-
-  return {
+  const result = {
     macros,
     sources: sources.filter(isNotEmptyPiece),
     comments: comments.filter(isNotEmptyPiece),
@@ -223,6 +222,7 @@ export function parse(content: string): SourceItem {
     namespaces: namespaces.filter(ns => ns.length > 0),
     typedefs,
   }
+  return result
 }
 
 export default parse

@@ -111,17 +111,32 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
       .name(commandName)
       .aliases(aliases)
       .arguments('<source filepath> [output filepath]')
-      .option('--rc, --remove-comments', 'remove comments')
-      .option('--rs, --remove-spaces', 'remove spaces')
-      .option('--rf, --remove-freopen', 'remove freopen statements')
-      .option('--ra, --remove-assert', 'remove assert statements')
-      .option('-I, --include <include_directory...>', 'include directories')
+
+      .option('--remove-comments', 'remove comments')
+      .option('--no-remove-comments')
+
+      .option('--remove-spaces', 'remove spaces')
+      .option('--no-remove-spaces')
+
+      .option('--remove-freopen', 'remove freopen statements')
+      .option('--no-remove-freopen')
+
+      .option('--remove-assert', 'remove assert statements')
+      .option('--no-remove-assert')
+
       .option('-u, --uglify', 'shortcut of --rc --rs.')
+      .option('--no-uglify')
+
       .option('-c, --copy', 'write generated code into system clipboard')
+      .option('--no-copy')
+
       .option(
         '-f, --force',
         'force write the generated code into output filepath',
       )
+      .option('--no-force')
+
+      .option('-I, --include <include_directory...>', 'include directories')
       .option('-o, --output <output filepath>', 'specify the output filepath')
       .action(async function (
         [_sourceFilepath],

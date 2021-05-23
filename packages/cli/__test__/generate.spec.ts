@@ -34,4 +34,18 @@ describe('simple', function () {
     await execSubCommandGenerate(program, args)
     fileSnapshot(caseRoot, outputFilenames)
   })
+
+  test('pretty', async function () {
+    const program = createProgram()
+    const args = [
+      '',
+      COMMAND_NAME,
+      'generate',
+      sourceFilepath,
+      '--no-remove-comments',
+      '--no-remove-spaces',
+    ]
+    await execSubCommandGenerate(program, args)
+    fileSnapshot(caseRoot, outputFilenames)
+  })
 })

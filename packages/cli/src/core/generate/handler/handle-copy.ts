@@ -10,8 +10,7 @@ async function handleCopy(content: string): Promise<void> {
     await copy(content)
     logger.info(`Copied to system clipboard.`)
   } catch (error) {
-    logger.debug(error)
-    logger.fatal(`Copied failed.`)
+    logger.fatal(`Coping failed:`, error)
   }
 }
 

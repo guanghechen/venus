@@ -19,12 +19,62 @@ int matchFirst(int lft, int rht, std::function<bool(int)> verify) {
 
 int main() {
   int data[5] = { 1, 2, 3, 3, 4 };
+
+int result = matchFirst(
+    0,
+    4,
+    [&data](int x) -> bool { return data[x] >= 3; }
+  );
+
+  
+  printf(\\"result: %d\\\\n\\", result);
+
+  char s[] = \\"common /** this is comments */ string\\";
+  char t[] = \\"common // this is comments\\";
+  return 0;
+}
+"
+`;
+
+exports[`simple pretty: venus.cpp 1`] = `
+"#include <cstdio>
+#include <functional>
+
+
+/**
+ * Find the first matched position.
+ */
+int matchFirst(int lft, int rht, std::function<bool(int)> verify) {
+  int rightBound = rht;
+  while (lft < rht) {
+    int mid = (lft + rht) >> 1;
+    if (verify(mid))
+      rht = mid;
+    else
+      lft = mid + 1;
+  }
+  return rht >= rightBound ? -1 : rht;
+}
+
+int main() {
+  int data[5] = { 1, 2, 3, 3, 4 };
+
+  /**
+   * Multiple
+   * line
+   * Comments
+   */
   int result = matchFirst(
     0,
     4,
     [&data](int x) -> bool { return data[x] >= 3; }
   );
+
+  // Single line comments
   printf(\\"result: %d\\\\n\\", result);
+
+  char s[] = \\"common /** this is comments */ string\\";
+  char t[] = \\"common // this is comments\\";
   return 0;
 }
 "
@@ -33,5 +83,5 @@ int main() {
 exports[`simple uglify: venus.cpp 1`] = `
 "#include<cstdio>
 #include <functional>
-int matchFirst(int lft,int rht,std::function<bool(int)>verify){int rightBound=rht;while(lft<rht){int mid=(lft+rht)>>1;if(verify(mid))rht=mid;else lft=mid+1;}return rht>=rightBound?-1:rht;}int main(){int data[5]={1,2,3,3,4};int result=matchFirst(0,4,[&data](int x)->bool{return data[x]>=3;});printf(\\"result: %d\\\\n\\",result);return 0;}"
+int matchFirst(int lft,int rht,std::function<bool(int)>verify){int rightBound=rht;while(lft<rht){int mid=(lft+rht)>>1;if(verify(mid))rht=mid;else lft=mid+1;}return rht>=rightBound?-1:rht;}int main(){int data[5]={1,2,3,3,4};int result=matchFirst(0,4,[&data](int x)->bool{return data[x]>=3;});printf(\\"result: %d\\\\n\\",result);char s[]=\\"common /** this is comments */ string\\";char t[]=\\"common // this is comments\\";return 0;}"
 `;

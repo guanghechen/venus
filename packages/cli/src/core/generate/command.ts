@@ -233,7 +233,11 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
 
         // resolve output filepath
         const output: string | null = cover<string | null>(
-          copy ? null : path.join(workspace, 'venus.cpp'),
+          copy
+            ? defaultOptions.output != null
+              ? path.join(workspace, defaultOptions.output)
+              : null
+            : path.join(workspace, 'venus.cpp'),
           options.output,
           isNonBlankString,
         )

@@ -179,11 +179,11 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
               cmakeListsFilepath,
               defaultOptions.encoding,
             )
-            const regex = /^\s*include_directories\(\s*(\S+?)\s*\)\s*$/gu
+            const regex = /\s*include_directories\(\s*(\S+?)\s*\)\s*/gu
             const includeDirectories: string[] = []
             // eslint-disable-next-line no-cond-assign
             for (let m; (m = regex.exec(content)) != null; ) {
-              const [, includeDirectory] = m[1].trim()
+              const includeDirectory = m[1].trim()
               includeDirectories.push(includeDirectory)
             }
             includes.push(...includeDirectories)

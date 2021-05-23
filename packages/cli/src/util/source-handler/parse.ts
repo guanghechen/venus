@@ -13,7 +13,7 @@ function matchMacro(content: string, start: number): SourcePiece {
 
   // Preserve the preceding whitespaces
   for (; i > 0; --i) {
-    if (!/^[\t ]$/.test(content.charAt(i - 1))) break
+    if (!/^[\t ]$/u.test(content.charAt(i - 1))) break
   }
 
   let end = start
@@ -23,7 +23,7 @@ function matchMacro(content: string, start: number): SourcePiece {
     if (c !== '\\') continue
 
     for (end += 1; end < content.length; ++end) {
-      if (/[\S]/.test(content.charAt(end))) break
+      if (/[\S]/u.test(content.charAt(end))) break
     }
     end -= 1
   }
@@ -93,7 +93,7 @@ function matchBlockComment(
 
   // Preserve the preceding whitespaces
   for (; i > 0; --i) {
-    if (!/^[\t ]$/.test(content.charAt(i - 1))) break
+    if (!/^[\t ]$/u.test(content.charAt(i - 1))) break
   }
 
   let end = i + marker[0].length

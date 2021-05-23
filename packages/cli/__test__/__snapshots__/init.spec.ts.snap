@@ -1,0 +1,192 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`init simple: CMakeLists.txt 1`] = `
+"cmake_minimum_required(VERSION 3.15)
+project(acm)
+set(CMAKE_CXX_STANDARD 11)
+
+include_directories(src)
+
+add_compile_definitions(GUANGHECHEN_LOCAL_CMAKE)
+add_compile_definitions(_GLIBCXX_DEBUG)
+
+# fake problems
+file(GLOB_RECURSE OJ_SOURCES oj/fake/*.cpp)
+foreach(SOURCE_PATH \${OJ_SOURCES})
+  get_filename_component(EXECUTABLE_NAME \${SOURCE_PATH} NAME_WE)
+  add_executable(\\"FAKE_\${EXECUTABLE_NAME}\\" \${SOURCE_PATH})
+endforeach(SOURCE_PATH \${OJ_SOURCES})
+"
+`;
+
+exports[`init simple: oj/fake/01.cpp 1`] = `
+"#include <@guanghechen/algorithm/match-first.hpp>
+#include <cstdio>
+
+int main() {
+  int data[5] = { 1, 2, 3, 3, 4 };
+  int result = matchFirst(
+    0,
+    4,
+    [&data](int x) -> bool { return data[x] >= 3; }
+  );
+  printf(\\"result: %d\\\\n\\", result);
+  return 0;
+}
+"
+`;
+
+exports[`init simple: package.json 1`] = `
+"{
+  \\"name\\": \\"@guanghechen/acm\\",
+  \\"version\\": \\"0.0.0\\",
+  \\"private\\": \\"true\\",
+  \\"scripts\\": {
+    \\"clean\\": \\"yarn\\",
+    \\"format\\": \\"run-s format:lint:fix format:prettier format:cpp\\",
+    \\"format:lint:fix\\": \\"eslint . --fix\\",
+    \\"format:cpp\\": \\"git-clang-format\\",
+    \\"format:prettier\\": \\"prettier --write .\\",
+    \\"postinstall\\": \\"run-p postinstall:**\\",
+    \\"postinstall:main\\": \\"yarn update:lock\\",
+    \\"postinstall:dev\\": \\"is-ci || husky install\\",
+    \\"run:cpp\\": \\"node script/run.js\\",
+    \\"update:lock\\": \\"yarn-deduplicate\\"
+  },
+  \\"devDependencies\\": {
+    \\"@babel/core\\": \\"^7.14.3\\",
+    \\"@guanghechen/eslint-config\\": \\"^1.5.0\\",
+    \\"@guanghechen/eslint-config-ts\\": \\"^1.5.0\\",
+    \\"@types/node\\": \\"^15.3.1\\",
+    \\"chalk\\": \\"^4.1.1\\",
+    \\"clang-format\\": \\"^1.5.0\\",
+    \\"eslint\\": \\"^7.26.0\\",
+    \\"eslint-config-prettier\\": \\"^8.3.0\\",
+    \\"eslint-plugin-prettier\\": \\"^3.4.0\\",
+    \\"fs-extra\\": \\"^10.0.0\\",
+    \\"husky\\": \\"6.0.0\\",
+    \\"is-ci\\": \\"3.0.0\\",
+    \\"lint-staged\\": \\"11.0.0\\",
+    \\"minimist\\": \\"^1.2.5\\",
+    \\"npm-run-all\\": \\"^4.1.5\\",
+    \\"prettier\\": \\"^2.3.0\\",
+    \\"ts-node\\": \\"^9.1.1\\",
+    \\"tsconfig-paths\\": \\"^3.9.0\\",
+    \\"typescript\\": \\"^4.2.4\\",
+    \\"venus-acm\\": \\"*\\",
+    \\"yarn-deduplicate\\": \\"3.1.0\\"
+  },
+  \\"lint-staged\\": {
+    \\"*.{js,jsx,ts,tsx}\\": [
+      \\"eslint --fix\\",
+      \\"prettier --write\\"
+    ],
+    \\"*.{json,eslintrc}\\": [
+      \\"prettier --write\\"
+    ],
+    \\"*.{cpp,hpp}\\": [
+      \\"git-clang-format\\"
+    ]
+  }
+}
+"
+`;
+
+exports[`init simple: script/run.js 1`] = `
+"#! /usr/bin/env node
+
+const chalk = require('chalk')
+const { spawn } = require('child_process')
+const fs = require('fs-extra')
+const minimist = require('minimist')
+const path = require('path')
+
+const workspaceRoot = path.join(__dirname, '..')
+const sourceRoot = path.join(workspaceRoot, 'src')
+
+/**
+ * Print usage information strings.
+ */
+function usage() {
+  const [arg1, arg2] = process.argv
+  console.log(\`\${arg1} \${arg2} <cpp source file>\`)
+}
+
+/**
+ * Compile and run a cpp file.
+ *
+ * @param {string} filename
+ * @param {{ verbose: boolean }} options
+ */
+function compileAndRun(filepath, options) {
+  const { dir, base: filename, name, ext } = path.parse(filepath)
+  const executableFilepath = path.join(dir, name)
+  const problemId = /^\\\\d+/.test(name) ? /^(\\\\d+)/.exec(name)[1] : null
+
+  if (ext !== '.cpp') {
+    console.log(chalk.yellow('Cannot handle \`ext\` type file.'))
+    return
+  }
+
+  const command = [
+    \`cd \${dir}\`,
+    \`g++ -std=c++11 -I '\${sourceRoot}' '\${filename}' -o '\${name}'\`,
+    \`./\${name}\`,
+  ].join(' && ')
+
+  if (options.verbose) console.log(chalk.green(command))
+  const child = spawn(command, { shell: true })
+
+  const dataFilepath = path.join(dir, 'data', \`\${problemId}.in\`)
+  if (fs.existsSync(dataFilepath)) {
+    const stream = fs.createReadStream(dataFilepath, 'utf-8')
+    stream.pipe(child.stdin)
+  } else {
+    process.stdin.pipe(child.stdin)
+  }
+
+  child.stdout.pipe(process.stdout)
+  child.stderr.pipe(process.stdout)
+
+  // handling CTRL + C
+  child.on('exit', () => void fs.unlinkSync(executableFilepath))
+}
+
+function run() {
+  const [, , ...argv] = process.argv
+  const args = minimist(argv)
+
+  const target = args._[0]
+  if (target === null) {
+    usage()
+    return
+  }
+
+  compileAndRun(path.resolve(process.cwd(), target), {
+    verbose: Boolean(args.verbose),
+  })
+}
+
+run()
+"
+`;
+
+exports[`init simple: src/@guanghechen/algorithm/match-first.hpp 1`] = `
+"#include <functional>
+
+/**
+ * Find the first matched position.
+ */
+int matchFirst(int lft, int rht, std::function<bool(int)> verify) {
+  int rightBound = rht;
+  while (lft < rht) {
+    int mid = (lft + rht) >> 1;
+    if (verify(mid))
+      rht = mid;
+    else
+      lft = mid + 1;
+  }
+  return rht >= rightBound ? -1 : rht;
+}
+"
+`;

@@ -1,5 +1,14 @@
 # Changelog
 
+<a name="2.0.0-alpha.3"></a>
+## 2.0.0-alpha.3 (2021-05-23)
+
+### Miscellaneous
+
+- 🚧 improve: use default output filepath in config files even the &#x60;--copy&#x60; option enabled. [[c141a65](https://github.com/guanghechen/venus/commit/c141a654e7aef708db573f67305becd90fd1d153)]
+- 📝 docs: update CHANGELOG [[6744236](https://github.com/guanghechen/venus/commit/67442363b72f6247597267ace9c827339168d968)]
+
+
 <a name="2.0.0-alpha.2"></a>
 ## 2.0.0-alpha.2 (2021-05-23)
 

@@ -1,4 +1,3 @@
-import { ensureFileExists } from '@/util/fs'
 import { Command } from '@barusu/util-cli'
 import {
   locateLatestPackageJson,
@@ -18,7 +17,9 @@ import type {
   SubCommandProcessor,
 } from '@barusu/util-cli'
 import { packageName } from '../../env/constant'
-import { logger } from '../../env/logger'
+import logger from '../../env/logger'
+import { ensureFileExists } from '../../util/fs'
+import { isUnderThePath } from '../../util/path'
 import {
   __defaultGlobalCommandOptions,
   resolveGlobalCommandOptions,
@@ -145,6 +146,8 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
             options,
           )
 
+        const { cwd, workspace } = defaultOptions
+
         // resolve includes
         const includes = cover<string[]>(
           defaultOptions.includes,
@@ -153,7 +156,7 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
         )
         {
           const cmakeListsFilepath = locateNearestFilepath(
-            _workspaceDir,
+            workspace,
             'CMakeLists.txt',
           )
 
@@ -216,7 +219,7 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
 
         // resolve output filepath
         const output: string | null = cover<string | null>(
-          copy ? null : 'venus.cpp',
+          copy ? null : path.join(workspace, 'venus.cpp'),
           options.output,
           isNonBlankString,
         )

@@ -1,5 +1,5 @@
-import { copy } from '@/util/copy-paste'
-import { logger } from '@/util/logger'
+import logger from '../../../env/logger'
+import { copy } from '../../../util/copy-paste'
 
 /**
  * Copy contents into system clipboard.

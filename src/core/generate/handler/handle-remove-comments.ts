@@ -1,5 +1,5 @@
-import { merge } from '@/util/source-handler/merge'
-import { parse } from '@/util/source-handler/parse'
+import merge from '../../../util/source-handler/merge'
+import parse from '../../../util/source-handler/parse'
 
 // Remove comments.
 function handleRemoveComments(content: string): string {

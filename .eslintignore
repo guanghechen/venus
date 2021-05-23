@@ -8,7 +8,7 @@
 !.eslintrc
 
 **/.vscode/
-**/__test__/cases/
+**/__test__/fixtures/
 **/__tmp__/
 **/coverage/
 **/boilerplate/

@@ -1,8 +1,8 @@
-import { yesOrNo } from '@/util/cli'
-import { isExists } from '@/util/fs'
-import { logger } from '@/util/logger'
-import { relativePath } from '@/util/path'
 import fs from 'fs-extra'
+import logger from '../../../env/logger'
+import { yesOrNo } from '../../../util/cli'
+import { isExists } from '../../../util/fs'
+import { relativePath } from '../../../util/path'
 import type { GenerateContext } from '../context'
 
 /**

@@ -1,9 +1,6 @@
+import { locateLatestPackageJson } from '@guanghechen/locate-helper'
+import fs from 'fs-extra'
 import path from 'path'
-
-export {
-  name as packageName,
-  version as packageVersion,
-} from '../../package.json'
 
 // Command name
 export const COMMAND_NAME = 'venus-acm'
@@ -13,6 +10,13 @@ export const configRootDir = path.resolve(__dirname, '../config')
 
 // Template files root dir
 export const templateRootDir = path.join(configRootDir, 'templates')
+
+const packageJson = locateLatestPackageJson(__dirname)
+const { name: packageName, version: packageVersion } =
+  packageJson != null
+    ? fs.readJSONSync(packageJson)
+    : { name: COMMAND_NAME, version: '0.0.0' }
+export { packageName, packageVersion }
 
 /**
  * Config of C++ language

@@ -5,7 +5,7 @@ import type {
   CommandConfigurationOptions,
   MergeStrategy,
 } from '@barusu/util-cli'
-import { logger } from '../env/logger'
+import logger from '../env/logger'
 
 /**
  * Global command options

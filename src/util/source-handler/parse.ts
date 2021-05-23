@@ -1,18 +1,6 @@
-import { languageConfig } from '@/env/constant'
-import { logger } from '../logger'
+import { languageConfig } from '../../env/constant'
+import logger from '../../env/logger'
 import type { SourceItem, SourcePiece } from './types'
-
-// Match dependency list.
-const createImportRegex = (flags?: string): RegExp =>
-  new RegExp(/#include\s*[<"]([\w\-_.:/\\]+)[>"]\s*?\n/, flags)
-
-// Match using namespace declarations.
-const createNamespaceRegex = (flags?: string): RegExp =>
-  new RegExp(/using\s+namespace\s+(\w+)\s*;\s*/, flags)
-
-// Match type alias list.
-const createTypedefRegex = (flags?: string): RegExp =>
-  new RegExp(/typedef\s+([\w* <>]+)\s+(\w+)\s*;\s*/, flags)
 
 /**
  * Try to match a macro definition from the given position.
@@ -193,7 +181,7 @@ export function parse(content: string): SourceItem {
   // Get dependency list from macro declarations.
   for (const macro of macros) {
     macro.content = macro.content.replace(
-      createImportRegex('g'),
+      /#include\s*[<"]([@\w\-_.:/\\]+)[>"]\s*?\n/g,
       (_: string, dependency: string) => {
         dependencies.push(dependency)
         return ''
@@ -204,7 +192,7 @@ export function parse(content: string): SourceItem {
   // Get namespaces.
   for (const source of sources) {
     source.content = source.content.replace(
-      createNamespaceRegex('g'),
+      /using\s+namespace\s+(\w+)\s*;\s*/g,
       (_: string, ns: string) => {
         namespaces.push(ns)
         return ''
@@ -215,7 +203,7 @@ export function parse(content: string): SourceItem {
   // Get typedef declarations
   for (const source of sources) {
     source.content = source.content.replace(
-      createTypedefRegex('g'),
+      /typedef\s+([\w* <>]+)\s+(\w+)\s*;\s*/g,
       (_: string, raw: string, alias: string) => {
         typedefs.set(alias, raw)
         return ''

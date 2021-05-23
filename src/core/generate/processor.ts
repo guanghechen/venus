@@ -1,9 +1,9 @@
+import { isNonBlankString } from '@guanghechen/option-helper'
+import path from 'path'
 import {
   resolveDependencies,
   resolveLocalDependencyPath,
-} from '@/util/source-handler/dependency'
-import { isNonBlankString } from '@guanghechen/option-helper'
-import path from 'path'
+} from '../../util/source-handler/dependency'
 import handleCopy from './handler/handle-copy'
 import handleRemoveAsserts from './handler/handle-remove-asserts'
 import handleRemoveComments from './handler/handle-remove-comments'

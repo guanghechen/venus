@@ -1,8 +1,8 @@
 import { isNonBlankString } from '@guanghechen/option-helper'
 import fs from 'fs-extra'
 import path from 'path'
+import logger from '../../env/logger'
 import { ensureFileExists, isFile } from '../fs'
-import { logger } from '../logger'
 import { toposort } from '../topo-sort'
 import merge from './merge'
 import parse from './parse'
@@ -143,7 +143,7 @@ async function collectDependencies(
       absolutePath,
     )
 
-    // dependencies 和 resolvedDependencies 等长
+    // dependencies and resolvedDependencies should be of equal length.
     if (dependencies.length !== resolvedDependencies.length) {
       logger.debug(
         `dependencies.length(${dependencies.length}) is not equals to resolvedDependencies.length(${resolvedDependencies.length})`,

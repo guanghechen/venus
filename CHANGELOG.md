@@ -1,5 +1,35 @@
 # Changelog
 
+<a name="next"></a>
+## next
+
+### Miscellaneous
+
+- 🚧 improve: update cpp project boilerplates &amp; update demo [[88bea7a](https://github.com/guanghechen/venus/commit/88bea7a8d32f132e11fbb49c6f75c8796862951b)]
+
+
+<a name="2.0.0-alpha.1"></a>
+## 2.0.0-alpha.1 (2021-05-23)
+
+### Changed
+
+- 🔧 chore: fix invalid cli filepath [[66dd4ec](https://github.com/guanghechen/venus/commit/66dd4ec0b49f46e5d14eb9a9d4615dfe088a1618)]
+
+### Removed
+
+- 🔥 docs: remove outdated demo [[890c727](https://github.com/guanghechen/venus/commit/890c7271ad0e71f462841a8cc7f65606cb2b933b)]
+
+### Fixed
+
+- 🐛 fix: fix erros on parsing include_directories [[91a35a3](https://github.com/guanghechen/venus/commit/91a35a3ab348687cb1a242a6ddd2fd88a94aca09)]
+
+### Miscellaneous
+
+- 📝 docs: add demo [[c2d3736](https://github.com/guanghechen/venus/commit/c2d3736a2b31a5cb3370864f48e88a5e6e31d097)]
+- 🚧 improve: update cpp project boilerplates [[8c113ba](https://github.com/guanghechen/venus/commit/8c113ba7203dfdc7a109cc77d1adafe3a90c64bc)]
+- 📝 docs: update CHANGELOG [[6bfd9ae](https://github.com/guanghechen/venus/commit/6bfd9ae4ca39f9736289f0b61d038ebe539462ed)]
+
+
 <a name="2.0.0-alpha.0"></a>
 ## 2.0.0-alpha.0 (2021-05-23)
 

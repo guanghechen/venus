@@ -1,10 +1,11 @@
 # Changelog
 
-<a name="next"></a>
-## next
+<a name="2.0.0-alpha.0"></a>
+## 2.0.0-alpha.0 (2021-05-23)
 
 ### Added
 
+- ✅ test: update tests [[a281e24](https://github.com/guanghechen/venus/commit/a281e2476e37ebd225ebbf6bd4c82c46c57348ce)]
 - ✅ test: add tests [[c1c88b2](https://github.com/guanghechen/venus/commit/c1c88b2d65649293331e465b3ec09599f8684a8a)]
 
 ### Changed
@@ -26,10 +27,19 @@
 
 ### Removed
 
+- 🔥 improve: remove dead code and unused dependencies [[454a640](https://github.com/guanghechen/venus/commit/454a6401f419aefa3e4d6a502bf3fc0af9281e64)]
 - 🔥 feat: remove sub command &#x27;create&#x27; [[90b2791](https://github.com/guanghechen/venus/commit/90b27915f2fad8202ac6aa09c32b7574c28dc237)]
+
+### Fixed
+
+- 🐛 improve: fix indent issues [[2782d99](https://github.com/guanghechen/venus/commit/2782d99dcdecbb5635f0a7211520f29c1f35d0f4)]
 
 ### Miscellaneous
 
+- 🚧 feat: support negative options &amp; update tests [[6b066bc](https://github.com/guanghechen/venus/commit/6b066bc97cbe720656b9029e036102fb15c4d109)]
+- 📝 docs: update README [[20f0d71](https://github.com/guanghechen/venus/commit/20f0d716855487866b9ae8d77b50771b058a919f)]
+- 🚧 feat: add sub-command &#x27;init&#x27; [[d41d53f](https://github.com/guanghechen/venus/commit/d41d53ffb231f897a17f8385309b186d5f993709)]
+- 📝 docs: add CHANGELOG [[608803b](https://github.com/guanghechen/venus/commit/608803beae4f2d9e0b159a2fcc1f77a984cccee1)]
 - 📝 docs: update README [[75306b4](https://github.com/guanghechen/venus/commit/75306b4d9a50186f94967797713f4f711c19e819)]
 - 🚧 fix: use rollup to bundle files [[2b45c64](https://github.com/guanghechen/venus/commit/2b45c645b78d4c511148a771f629e3edb2d1cd13)]
 -  Merge pull request [#1](https://github.com/guanghechen/venus/issues/1) from lemon-clown/dependabot/npm_and_yarn/js-yaml-3.13.1 [[449e356](https://github.com/guanghechen/venus/commit/449e356086c5c1ee9d30280c587767f76c5c3117)]

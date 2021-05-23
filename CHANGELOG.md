@@ -1,10 +1,12 @@
 # Changelog
 
-<a name="next"></a>
-## next
+<a name="2.0.0-alpha.2"></a>
+## 2.0.0-alpha.2 (2021-05-23)
 
 ### Miscellaneous
 
+- 🔨 chore: add github action to run ci [[3566e1a](https://github.com/guanghechen/venus/commit/3566e1a363ca6cfa80e0d81608ae1e5eeabd88ee)]
+- 📝 docs: update CHANGELOG [[97f3538](https://github.com/guanghechen/venus/commit/97f3538afb3ddc8a30938232d387c0919c79302f)]
 - 🚧 improve: update cpp project boilerplates &amp; update demo [[88bea7a](https://github.com/guanghechen/venus/commit/88bea7a8d32f132e11fbb49c6f75c8796862951b)]
 
 

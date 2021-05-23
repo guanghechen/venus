@@ -1,0 +1,15 @@
+{
+  "venus-acm": {
+    "generate": {
+      "includes": ["src"],
+      "force": true,
+      "copy": false,
+      "uglify": false,
+      "removeComments": true,
+      "removeSpaces": false,
+      "removeFreopen": true,
+      "removeAssert": true,
+      "output": ""
+    }
+  }
+}

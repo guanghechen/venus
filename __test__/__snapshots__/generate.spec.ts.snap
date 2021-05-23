@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`simple basic: venus.cpp 1`] = `
+"#include <cstdio>
+#include <functional>
+
+
+int matchFirst(int lft, int rht, std::function<bool(int)> verify) {
+  int rightBound = rht;
+  while (lft < rht) {
+    int mid = (lft + rht) >> 1;
+    if (verify(mid))
+      rht = mid;
+    else
+      lft = mid + 1;
+  }
+  return rht >= rightBound ? -1 : rht;
+}
+
+int main() {
+  int data[5] = { 1, 2, 3, 3, 4 };
+  int result = matchFirst(
+    0,
+    4,
+    [&data](int x) -> bool { return data[x] >= 3; }
+  );
+  printf(\\"result: %d\\\\n\\", result);
+  return 0;
+}
+"
+`;
+
+exports[`simple uglify: venus.cpp 1`] = `
+"#include<cstdio>
+#include <functional>
+int matchFirst(int lft,int rht,std::function<bool(int)>verify){int rightBound=rht;while(lft<rht){int mid=(lft+rht)>>1;if(verify(mid))rht=mid;else lft=mid+1;}return rht>=rightBound?-1:rht;}int main(){int data[5]={1,2,3,3,4};int result=matchFirst(0,4,[&data](int x)->bool{return data[x]>=3;});printf(\\"result: %d\\\\n\\",result);return 0;}"
+`;

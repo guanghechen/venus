@@ -20,7 +20,7 @@ int matchFirst(int lft, int rht, std::function<bool(int)> verify) {
 int main() {
   int data[5] = { 1, 2, 3, 3, 4 };
 
-int result = matchFirst(
+  int result = matchFirst(
     0,
     4,
     [&data](int x) -> bool { return data[x] >= 3; }

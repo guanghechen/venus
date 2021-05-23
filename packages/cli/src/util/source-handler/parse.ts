@@ -110,9 +110,13 @@ function matchBlockComment(
   end += marker[1].length
 
   // Try to match the remaining whitespaces
+  let lastLinefeedPos = end
   for (; end < content.length; ++end) {
-    if (/\S/u.test(content.charAt(end))) break
+    const c = content.charAt(end)
+    if (c === '\n') lastLinefeedPos = end + 1
+    if (/\S/u.test(c)) break
   }
+  end = lastLinefeedPos
   return { start: i, content: content.slice(i, end) }
 }
 

@@ -31,6 +31,7 @@
     "postpublish": "pinst --enable",
     "rebuild": "yarn clean && yarn build",
     "test": "lerna exec --concurrency 1 'npm run test --if-present'",
+    "test:update": "lerna run test --concurrency 1 -- -u",
     "update:changelog": "gitmoji-changelog update",
     "update:lock": "yarn-deduplicate"
   },

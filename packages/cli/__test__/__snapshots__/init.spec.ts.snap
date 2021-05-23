@@ -43,6 +43,8 @@ exports[`init simple: package.json 1`] = `
   \\"private\\": \\"true\\",
   \\"scripts\\": {
     \\"clean\\": \\"yarn\\",
+    \\"cpp:generate\\": \\"node generate\\",
+    \\"cpp:run\\": \\"node script/run.js\\",
     \\"format\\": \\"run-s format:lint:fix format:prettier format:cpp\\",
     \\"format:lint:fix\\": \\"eslint . --fix\\",
     \\"format:cpp\\": \\"git-clang-format\\",
@@ -50,7 +52,6 @@ exports[`init simple: package.json 1`] = `
     \\"postinstall\\": \\"run-p postinstall:**\\",
     \\"postinstall:main\\": \\"yarn update:lock\\",
     \\"postinstall:dev\\": \\"is-ci || husky install\\",
-    \\"run:cpp\\": \\"node script/run.js\\",
     \\"update:lock\\": \\"yarn-deduplicate\\"
   },
   \\"devDependencies\\": {
@@ -73,7 +74,7 @@ exports[`init simple: package.json 1`] = `
     \\"ts-node\\": \\"^9.1.1\\",
     \\"tsconfig-paths\\": \\"^3.9.0\\",
     \\"typescript\\": \\"^4.2.4\\",
-    \\"venus-acm\\": \\"*\\",
+    \\"venus-acm\\": \\"2.x.x\\",
     \\"yarn-deduplicate\\": \\"3.1.0\\"
   },
   \\"lint-staged\\": {
@@ -87,6 +88,18 @@ exports[`init simple: package.json 1`] = `
     \\"*.{cpp,hpp}\\": [
       \\"git-clang-format\\"
     ]
+  },
+  \\"venus-acm\\": {
+    \\"generate\\": {
+      \\"includes\\": [],
+      \\"force\\": true,
+      \\"copy\\": true,
+      \\"uglify\\": false,
+      \\"removeComments\\": true,
+      \\"removeSpaces\\": false,
+      \\"removeFreopen\\": true,
+      \\"removeAssert\\": true
+    }
   }
 }
 "

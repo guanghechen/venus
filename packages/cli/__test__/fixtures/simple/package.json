@@ -8,8 +8,7 @@
       "removeComments": true,
       "removeSpaces": false,
       "removeFreopen": true,
-      "removeAssert": true,
-      "output": ""
+      "removeAssert": true
     }
   }
 }

@@ -1,5 +1,26 @@
 # Changelog
 
+<a name="2.0.0-alpha.5"></a>
+## 2.0.0-alpha.5 (2021-07-21)
+
+### Changed
+
+- ⬆️ chore: upgrade dependencies [[be42303](https://github.com/guanghechen/venus/commit/be42303589dbcabeba3a94137197ed78a0db6629)]
+
+### Miscellaneous
+
+-  refactor: use @guanghechen/commander-helper and @guanghechen/chalk-logger instead of @barusu/cli-util and @barusu/chalk-logger respectively [[91bcbfe](https://github.com/guanghechen/venus/commit/91bcbfee49a573721dcd96de94930b3a3b398840)]
+
+
+<a name="2.0.0-alpha.4"></a>
+## 2.0.0-alpha.4 (2021-05-24)
+
+### Miscellaneous
+
+- 📝 docs: update README [[192d9fb](https://github.com/guanghechen/venus/commit/192d9fbfde432c9a5037eaec6edec3241dfc674e)]
+- 📝 docs: update CHANGELOG [[c836cb8](https://github.com/guanghechen/venus/commit/c836cb84c6f4d48aea012852cfbf62b8eeb089a5)]
+
+
 <a name="2.0.0-alpha.3"></a>
 ## 2.0.0-alpha.3 (2021-05-23)
 

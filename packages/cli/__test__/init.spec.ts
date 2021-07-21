@@ -1,4 +1,4 @@
-import { absoluteOfWorkspace } from '@barusu/util-cli'
+import { absoluteOfWorkspace } from '@guanghechen/file-helper'
 import { fileSnapshot } from '@guanghechen/jest-helper'
 import fs from 'fs-extra'
 import globby from 'globby'

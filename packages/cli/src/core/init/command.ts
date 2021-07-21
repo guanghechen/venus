@@ -1,9 +1,9 @@
-import { Command } from '@barusu/util-cli'
+import { Command } from '@guanghechen/commander-helper'
 import type {
   CommandConfigurationFlatOpts,
   SubCommandCreator,
   SubCommandProcessor,
-} from '@barusu/util-cli'
+} from '@guanghechen/commander-helper'
 import { cover, isNotEmptyArray } from '@guanghechen/option-helper'
 import { packageName } from '../../env/constant'
 import logger from '../../env/logger'
@@ -57,8 +57,8 @@ export const createSubCommandInit: SubCommandCreator<SubCommandInitOptions> =
           resolveGlobalCommandOptions(
             packageName,
             commandName,
-            __defaultCommandOptions,
             _workspaceDir,
+            __defaultCommandOptions,
             options,
           )
 

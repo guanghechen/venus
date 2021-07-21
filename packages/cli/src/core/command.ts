@@ -1,5 +1,5 @@
-import { createTopCommand } from '@barusu/util-cli'
-import type { Command } from '@barusu/util-cli'
+import type { Command } from '@guanghechen/commander-helper'
+import { createTopCommand } from '@guanghechen/commander-helper'
 import { COMMAND_NAME, packageVersion } from '../env/constant'
 
 /**

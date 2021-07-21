@@ -1,4 +1,4 @@
-import ChalkLogger from '@barusu/chalk-logger'
+import ChalkLogger from '@guanghechen/chalk-logger'
 import { COMMAND_NAME } from './constant'
 
 const logger = new ChalkLogger(

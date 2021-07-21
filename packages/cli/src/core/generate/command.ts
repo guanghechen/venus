@@ -1,9 +1,9 @@
-import { Command } from '@barusu/util-cli'
 import type {
   CommandConfigurationFlatOpts,
   SubCommandCreator,
   SubCommandProcessor,
-} from '@barusu/util-cli'
+} from '@guanghechen/commander-helper'
+import { Command } from '@guanghechen/commander-helper'
 import {
   locateLatestPackageJson,
   locateNearestFilepath,
@@ -155,8 +155,8 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
           resolveGlobalCommandOptions(
             packageName,
             commandName,
-            __defaultCommandOptions,
             _workspaceDir,
+            __defaultCommandOptions,
             options,
           )
 

@@ -2,11 +2,11 @@ import type {
   SubCommandExecutor,
   SubCommandMounter,
   SubCommandProcessor,
-} from '@barusu/util-cli'
+} from '@guanghechen/commander-helper'
 import {
   createSubCommandExecutor,
   createSubCommandMounter,
-} from '@barusu/util-cli'
+} from '@guanghechen/commander-helper'
 import type { SubCommandInitOptions } from '../core/init/command'
 import {
   createInitContextFromOptions,

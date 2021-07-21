@@ -1,12 +1,12 @@
-import {
-  createSubCommandExecutor,
-  createSubCommandMounter,
-} from '@barusu/util-cli'
 import type {
   SubCommandExecutor,
   SubCommandMounter,
   SubCommandProcessor,
-} from '@barusu/util-cli'
+} from '@guanghechen/commander-helper'
+import {
+  createSubCommandExecutor,
+  createSubCommandMounter,
+} from '@guanghechen/commander-helper'
 import {
   createGenerateContextFromOptions,
   createSubCommandGenerate,

@@ -110,7 +110,7 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
     command
       .name(commandName)
       .aliases(aliases)
-      .arguments('<source filepath> [output filepath]')
+      .arguments('<sourceFilepath> [outputFilepath]')
 
       .option('--remove-comments', 'remove comments')
       .option('--no-remove-comments')

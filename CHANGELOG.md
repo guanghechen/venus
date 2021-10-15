@@ -1,5 +1,21 @@
 # Changelog
 
+<a name="2.0.0"></a>
+## 2.0.0 (2021-10-15)
+
+### Changed
+
+- ⬆️ chore: upgrade dependencies &amp; fix issues due to the upgrade [[488c577](https://github.com/guanghechen/venus/commit/488c577501eb4d2ff37c1ae15a569265cb48074d)]
+
+### Fixed
+
+- 🐛 fix: add missing line-ends of macro definitions. [[fbf1e0d](https://github.com/guanghechen/venus/commit/fbf1e0d7c2a3e887076c35032cca1858f34a9297)]
+
+### Miscellaneous
+
+- 📝 docs: update CHANGELOG [[8dd351e](https://github.com/guanghechen/venus/commit/8dd351eace61eeaaa674050151f2dd6fa4ab7351)]
+
+
 <a name="2.0.0-alpha.5"></a>
 ## 2.0.0-alpha.5 (2021-07-21)
 

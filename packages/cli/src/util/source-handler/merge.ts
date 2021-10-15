@@ -51,8 +51,10 @@ export function merge(sourceItem: SourceItem): string {
   ]
     .sort((x: Token, y: Token): number => x.rank - y.rank)
     .map((token: Token): string => {
-      if (token.type !== 'macro') return token.content
-      return token.content.replace(/^[\n]*/, '').trimRight()
+      if (token.type === 'macro') {
+        return token.content.replace(/^[\n]*/, '').trimRight() + '\n'
+      }
+      return token.content
     })
 
   const dependencies: string = Array.from(new Set(sourceItem.dependencies))

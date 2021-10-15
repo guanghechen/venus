@@ -1,7 +1,21 @@
 #include <@guanghechen/algorithm/match-first.hpp>
 #include <cstdio>
+#include <fstream>
+#include <iostream>
+using namespace std;
 
 int main() {
+#ifdef GHC_LOCAL
+#define in cin
+#define out cout
+#else
+#define in fin
+#define out fout
+
+  ofstream fout("test.out");
+  ifstream fin("test.in");
+#endif
+
   int data[5] = { 1, 2, 3, 3, 4 };
 
   /**

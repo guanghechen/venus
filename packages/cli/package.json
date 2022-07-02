@@ -44,14 +44,14 @@
     "test": "cross-env TS_NODE_FILES=true jest --config ../../jest.config.js --rootDir ."
   },
   "dependencies": {
-    "@guanghechen/chalk-logger": "^1.8.3",
-    "@guanghechen/commander-helper": "^1.8.3",
-    "@guanghechen/file-helper": "^1.8.3",
-    "@guanghechen/locate-helper": "^1.8.3",
-    "@guanghechen/option-helper": "^1.8.3",
-    "@guanghechen/plop-helper": "^1.8.3",
+    "@guanghechen/chalk-logger": "^1.9.5",
+    "@guanghechen/commander-helper": "^1.9.5",
+    "@guanghechen/file-helper": "^1.9.5",
+    "@guanghechen/locate-helper": "^1.9.5",
+    "@guanghechen/option-helper": "^1.9.5",
+    "@guanghechen/plop-helper": "^1.9.5",
     "clipboardy": "^2.3.0",
-    "fs-extra": "^10.0.0",
+    "fs-extra": "^10.1.0",
     "inquirer": "^8.2.0",
     "js-yaml": "^4.1.0",
     "node-plop": "^0.26.2"

@@ -1,5 +1,22 @@
 # Changelog
 
+<a name="2.0.1"></a>
+## 2.0.1 (2022-07-02)
+
+### Added
+
+- 👷‍♂️ chore: update ci configs [[f01dabd](https://github.com/guanghechen/venus/commit/f01dabd420c160c15cb87dc4cbb8ce55c934b7c5)]
+
+### Changed
+
+- ⬆️ chore: ugprade dependencies [[d4ee972](https://github.com/guanghechen/venus/commit/d4ee9724fcf569658bb9a2accd70912a9cfb577b)]
+- 🔧 chore: update yarn.lock [[fb20849](https://github.com/guanghechen/venus/commit/fb20849bb6ff2458e54089537065392256aff712)]
+
+### Miscellaneous
+
+- 📝 docs: update CHANGELOG [[2c74e2b](https://github.com/guanghechen/venus/commit/2c74e2b2af8177cbec0e04e78be161d40b965d69)]
+
+
 <a name="2.0.0"></a>
 ## 2.0.0 (2021-10-15)
 

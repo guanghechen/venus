@@ -1,6 +1,5 @@
 {
   "cSpell.words": [
-    "Topo",
     "barusu",
     "bestcoder",
     "boilerplates",
@@ -19,10 +18,12 @@
     "guanghechen",
     "ifdef",
     "ifndef",
+    "lintfix",
     "pinst",
     "postpublish",
     "prebuild",
     "prettierignore",
+    "Topo",
     "toposort",
     "tsbuildinfo",
     "typedefs",

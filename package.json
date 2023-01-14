@@ -1,6 +1,7 @@
 {
   "name": "@guanghechen/venus",
-  "version": "1.1.11",
+  "version": "0.0.0",
+  "private": true,
   "description": "Merge cpp codes into single sources file.",
   "author": {
     "name": "guanghechen",
@@ -12,9 +13,8 @@
   },
   "homepage": "https://github.com/guanghechen/venus#readme",
   "license": "MIT",
-  "private": true,
   "engines": {
-    "node": ">= 14.15.0"
+    "node": ">= 16.0.0"
   },
   "scripts": {
     ":publish": "yarn test:coverage && lerna publish",
@@ -52,7 +52,7 @@
     "@types/jest": "29.2.5",
     "@types/js-yaml": "^4.0.5",
     "@types/minimatch": "^5.1.2",
-    "cross-env": "7.0.3",
+    "cross-env": "^7.0.3",
     "eslint": "8.31.0",
     "eslint-config-prettier": "8.6.0",
     "eslint-plugin-jest": "27.2.1",

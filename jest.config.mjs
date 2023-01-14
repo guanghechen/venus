@@ -3,10 +3,13 @@ import { resolve } from 'import-meta-resolve'
 import path from 'node:path'
 import url from 'node:url'
 
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
+const locatePackageLocation = async (packageName) =>
+  url.fileURLToPath(await resolve(packageName, import.meta.url))
+
 export default async function () {
-  const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
   const baseConfig = await tsMonorepoConfig(__dirname, { useESM: true })
-  const chalkLocation = url.fileURLToPath(await resolve('chalk', import.meta.url))
+  const chalkLocation = await locatePackageLocation('chalk')
 
   const config = {
     ...baseConfig,
@@ -24,6 +27,7 @@ export default async function () {
         'chalk/source/vendor/supports-color/index.js',
       ),
     },
+    coverageProvider: 'babel',
     coverageThreshold: {
       global: {
         branches: 60,

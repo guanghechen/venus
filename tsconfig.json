@@ -2,18 +2,10 @@
   "extends": "./tsconfig.settings",
   "compilerOptions": {
     "baseUrl": ".",
+    "outDir": "lib",
     "paths": {
-      "venus-acm": ["./packages/cli/src"]
+      "venus-acm": ["packages/cli/src"]
     }
   },
-  "exclude": [
-    "**/__tmp__/**",
-    "**/coverage/**",
-    "**/demo/**",
-    "**/doc/**",
-    "**/lib/**",
-    "**/node_modules/**",
-    "*.tsbuildinfo",
-    "**/__test__/fixtures/**"
-  ]
+  "exclude": ["**/__test__/fixtures"]
 }

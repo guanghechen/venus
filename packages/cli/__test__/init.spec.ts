@@ -1,6 +1,6 @@
 import { fileSnapshot } from '@guanghechen/helper-jest'
 import { absoluteOfWorkspace } from '@guanghechen/helper-path'
-import globby from 'globby'
+import { globby } from 'globby'
 import fs from 'node:fs'
 import path from 'node:path'
 import url from 'node:url'
@@ -34,7 +34,7 @@ describe('init', function () {
 
       // write the outputs to snapshots
       const files = (
-        await globby.globby(['*', '**/*'], {
+        await globby(['*', '**/*'], {
           cwd: outputWorkspace,
           onlyFiles: true,
           expandDirectories: false,

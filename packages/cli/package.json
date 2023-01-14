@@ -44,7 +44,7 @@
     "README.md"
   ],
   "bin": {
-    "venus": "lib/cjs/cli.js"
+    "venus": "lib/esm/cli.mjs"
   },
   "scripts": {
     "build": "rimraf lib/ && cross-env NODE_ENV=production rollup -c ../../rollup.config.cli.mjs",

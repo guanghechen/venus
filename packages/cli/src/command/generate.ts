@@ -1,18 +1,18 @@
 import type {
-  SubCommandExecutor,
-  SubCommandMounter,
-  SubCommandProcessor,
-} from '@guanghechen/commander-helper'
+  ISubCommandExecutor,
+  ISubCommandMounter,
+  ISubCommandProcessor,
+} from '@guanghechen/helper-commander'
 import {
   createSubCommandExecutor,
   createSubCommandMounter,
-} from '@guanghechen/commander-helper'
+} from '@guanghechen/helper-commander'
 import {
   createGenerateContextFromOptions,
   createSubCommandGenerate,
 } from '../core/generate/command'
-import type { SubCommandGenerateOptions } from '../core/generate/command'
-import type { GenerateContext } from '../core/generate/context'
+import type { ISubCommandGenerateOptions } from '../core/generate/command'
+import type { IGenerateContext } from '../core/generate/context'
 import GenerateProcessor from '../core/generate/processor'
 
 /**
@@ -21,9 +21,9 @@ import GenerateProcessor from '../core/generate/processor'
  * @param options
  * @returns {void|Promise<void>}
  */
-export const processSubCommandGenerate: SubCommandProcessor<SubCommandGenerateOptions> =
-  async function (options: SubCommandGenerateOptions): Promise<void> {
-    const context: GenerateContext = await createGenerateContextFromOptions(
+export const processSubCommandGenerate: ISubCommandProcessor<ISubCommandGenerateOptions> =
+  async function (options: ISubCommandGenerateOptions): Promise<void> {
+    const context: IGenerateContext = await createGenerateContextFromOptions(
       options,
     )
     const processor = new GenerateProcessor(context)
@@ -36,8 +36,8 @@ export const processSubCommandGenerate: SubCommandProcessor<SubCommandGenerateOp
  * @param {Command}   parentCommand
  * @returns {void}
  */
-export const mountSubCommandGenerate: SubCommandMounter =
-  createSubCommandMounter<SubCommandGenerateOptions>(
+export const mountSubCommandGenerate: ISubCommandMounter =
+  createSubCommandMounter<ISubCommandGenerateOptions>(
     createSubCommandGenerate,
     processSubCommandGenerate,
   )
@@ -49,8 +49,8 @@ export const mountSubCommandGenerate: SubCommandMounter =
  * @param {string[]}  args
  * @returns {Promise}
  */
-export const execSubCommandGenerate: SubCommandExecutor =
-  createSubCommandExecutor<SubCommandGenerateOptions>(
+export const execSubCommandGenerate: ISubCommandExecutor =
+  createSubCommandExecutor<ISubCommandGenerateOptions>(
     createSubCommandGenerate,
     processSubCommandGenerate,
   )

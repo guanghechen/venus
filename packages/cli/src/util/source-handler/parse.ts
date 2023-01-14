@@ -1,6 +1,6 @@
 import { languageConfig } from '../../env/constant'
-import logger from '../../env/logger'
-import type { SourceItem, SourcePiece } from './types'
+import { logger } from '../../env/logger'
+import type { ISourceItem, ISourcePiece } from './types'
 
 /**
  * Try to match a macro definition from the given position.
@@ -8,7 +8,7 @@ import type { SourceItem, SourcePiece } from './types'
  * @param content
  * @param start
  */
-function matchMacro(content: string, start: number): SourcePiece {
+function matchMacro(content: string, start: number): ISourcePiece {
   let i = start
 
   // Preserve the preceding whitespaces
@@ -36,7 +36,7 @@ function matchMacro(content: string, start: number): SourcePiece {
  * @param content
  * @param start
  */
-function matchLiteral(content: string, start: number): SourcePiece {
+function matchLiteral(content: string, start: number): ISourcePiece {
   let end = start + 1
   const quote = content.charAt(start)
   for (; end < content.length; ++end) {
@@ -67,7 +67,7 @@ function matchInlineComment(
   content: string,
   start: number,
   marker: string,
-): SourcePiece {
+): ISourcePiece {
   let end = start + marker.length
   for (; end < content.length; ++end) {
     if (content.charAt(end) === '\n') break
@@ -88,7 +88,7 @@ function matchBlockComment(
   content: string,
   start: number,
   marker: [string, string],
-): SourcePiece {
+): ISourcePiece {
   let i = start
 
   // Preserve the preceding whitespaces
@@ -124,20 +124,20 @@ function matchBlockComment(
  * Split source contents into various pieces.
  * @param content
  */
-export function parse(content: string): SourceItem {
+export function parse(content: string): ISourceItem {
   const { macroMarker, quoteMarker, inlineCommentMarker, blockCommentMarker } =
     languageConfig
-  const macros: SourcePiece[] = []
-  const sources: SourcePiece[] = []
-  const comments: SourcePiece[] = []
-  const literals: SourcePiece[] = []
+  const macros: ISourcePiece[] = []
+  const sources: ISourcePiece[] = []
+  const comments: ISourcePiece[] = []
+  const literals: ISourcePiece[] = []
   const dependencies: string[] = []
   const namespaces: string[] = []
   const typedefs: Map<string, string> = new Map<string, string>()
 
   let lastIndex = 0
   for (let i = lastIndex; i < content.length; ++i) {
-    let sourcePiece: SourcePiece | null = null
+    let sourcePiece: ISourcePiece | null = null
 
     // Try to match macro declaration
     if (sourcePiece == null && content.startsWith(macroMarker, i)) {
@@ -215,7 +215,7 @@ export function parse(content: string): SourceItem {
     )
   }
 
-  const isNotEmptyPiece = (sourcePiece: SourcePiece): boolean =>
+  const isNotEmptyPiece = (sourcePiece: ISourcePiece): boolean =>
     sourcePiece.content.length > 0
   const result = {
     macros,

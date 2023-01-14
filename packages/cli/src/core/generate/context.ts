@@ -1,7 +1,7 @@
 /**
  * Context of the sub-command 'generate'.
  */
-export interface GenerateContext {
+export interface IGenerateContext {
   /**
    * Path of currently executing command.
    */

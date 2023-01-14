@@ -2,7 +2,7 @@ import { absoluteOfWorkspace } from '@guanghechen/file-helper'
 import { fileSnapshot } from '@guanghechen/jest-helper'
 import fs from 'fs-extra'
 import globby from 'globby'
-import path from 'path'
+import path from 'node:path'
 import { COMMAND_NAME, createProgram, execSubCommandInit } from '../src'
 
 describe('init', function () {

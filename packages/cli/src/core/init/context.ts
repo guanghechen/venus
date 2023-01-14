@@ -1,7 +1,7 @@
 /**
  * Context variables for RestfulApiInitContext
  */
-export interface InitContext {
+export interface IInitContext {
   /**
    * Path of currently executing command
    */

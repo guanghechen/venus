@@ -1,20 +1,21 @@
-import { Command } from '@guanghechen/commander-helper'
 import type {
-  CommandConfigurationFlatOpts,
-  SubCommandCreator,
-  SubCommandProcessor,
-} from '@guanghechen/commander-helper'
-import { cover, isNotEmptyArray } from '@guanghechen/option-helper'
-import { packageName } from '../../env/constant'
-import logger from '../../env/logger'
+  ICommandConfigurationFlatOpts,
+  ISubCommandCreator,
+  ISubCommandProcessor,
+} from '@guanghechen/helper-commander'
+import { Command } from '@guanghechen/helper-commander'
+import { isNotEmptyArray } from '@guanghechen/helper-is'
+import { cover } from '@guanghechen/helper-option'
+import { PACKAGE_NAME } from '../../env/constant'
+import { logger } from '../../env/logger'
 import {
   __defaultGlobalCommandOptions,
   resolveGlobalCommandOptions,
 } from '../option'
-import type { GlobalCommandOptions } from '../option'
-import type { InitContext } from './context'
+import type { IGlobalCommandOptions } from '../option'
+import type { IInitContext } from './context'
 
-interface SubCommandOptions extends GlobalCommandOptions {
+interface SubCommandOptions extends IGlobalCommandOptions {
   /**
    * Pass to plop
    */
@@ -27,14 +28,14 @@ const __defaultCommandOptions: SubCommandOptions = {
 }
 
 export type SubCommandInitOptions = SubCommandOptions &
-  CommandConfigurationFlatOpts
+  ICommandConfigurationFlatOpts
 
 /**
  * create Sub-command: init
  */
-export const createSubCommandInit: SubCommandCreator<SubCommandInitOptions> =
+export const createSubCommandInit: ISubCommandCreator<SubCommandInitOptions> =
   function (
-    handle?: SubCommandProcessor<SubCommandInitOptions>,
+    handle?: ISubCommandProcessor<SubCommandInitOptions>,
     commandName = 'init',
     aliases: string[] = ['i'],
   ): Command {
@@ -55,10 +56,10 @@ export const createSubCommandInit: SubCommandCreator<SubCommandInitOptions> =
 
         const defaultOptions: SubCommandInitOptions =
           resolveGlobalCommandOptions(
-            packageName,
+            PACKAGE_NAME,
             commandName,
-            _workspaceDir,
             __defaultCommandOptions,
+            _workspaceDir,
             options,
           )
 
@@ -89,8 +90,8 @@ export const createSubCommandInit: SubCommandCreator<SubCommandInitOptions> =
  */
 export async function createInitContextFromOptions(
   options: SubCommandInitOptions,
-): Promise<InitContext> {
-  const context: InitContext = {
+): Promise<IInitContext> {
+  const context: IInitContext = {
     cwd: options.cwd,
     workspace: options.workspace,
     encoding: options.encoding,

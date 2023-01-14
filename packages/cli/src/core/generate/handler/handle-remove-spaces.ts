@@ -8,7 +8,7 @@ const precedingSpaces = /\s+(?![\w_#])/g
 const followingSpaces = /(?<![\w_])\s+/g
 
 // Remove excess spaces.
-function handleRemoveSpaces(content: string): string {
+export function handleRemoveSpaces(content: string): string {
   const sourceItem = parse(content)
   sourceItem.sources = sourceItem.sources
     .map(({ start, content }) => ({
@@ -77,5 +77,3 @@ function handleRemoveSpaces(content: string): string {
 
   return header.concat('\n').concat(typedefs).concat(body)
 }
-
-export default handleRemoveSpaces

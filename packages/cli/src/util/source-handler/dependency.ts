@@ -1,10 +1,10 @@
-import { isNonBlankString } from '@guanghechen/option-helper'
+import { isNonBlankString } from '@guanghechen/helper-is'
 import fs from 'fs-extra'
-import path from 'path'
-import logger from '../../env/logger'
+import path from 'node:path'
+import { logger } from '../../env/logger'
 import { ensureFileExists, isFile } from '../fs'
 import { toposort } from '../topo-sort'
-import type { TopoNode } from '../topo-sort'
+import type { ITopoNode } from '../topo-sort'
 import merge from './merge'
 import parse from './parse'
 
@@ -63,14 +63,14 @@ export async function resolveDependencies(
     absoluteSourcePath: string,
   ) => Array<string | null>,
   absoluteSourcePath: string,
-  encoding: string,
+  encoding: BufferEncoding,
 ): Promise<string> {
   const namespaces: string[] = []
   const standardDependencies: string[] = []
   const typedefs: Map<string, string> = new Map<string, string>()
 
   // Collect dependencies.
-  const o: TopoNode = await collectDependencies(
+  const o: ITopoNode = await collectDependencies(
     resolveDependencyPath,
     absoluteSourcePath,
     encoding,
@@ -126,13 +126,13 @@ async function collectDependencies(
     absoluteSourcePath: string,
   ) => Array<string | null>,
   absolutePath: string,
-  encoding: string,
+  encoding: BufferEncoding,
   standardDependencies: string[],
-): Promise<TopoNode> {
+): Promise<ITopoNode> {
   const dependencySet: Set<string> = new Set<string>()
-  const topoNodeMap: Map<string, TopoNode> = new Map<string, TopoNode>()
+  const topoNodeMap: Map<string, ITopoNode> = new Map<string, ITopoNode>()
 
-  async function collect(absolutePath: string): Promise<TopoNode> {
+  async function collect(absolutePath: string): Promise<ITopoNode> {
     ensureFileExists(absolutePath)
     const content = await fs.readFile(absolutePath, { encoding })
     const dependencies = parse(content).dependencies.filter(isNonBlankString)
@@ -152,7 +152,7 @@ async function collectDependencies(
       process.exit(-1)
     }
 
-    const o: TopoNode = { value: absolutePath, children: [] }
+    const o: ITopoNode = { value: absolutePath, children: [] }
     topoNodeMap.set(o.value, o)
     for (let i = 0; i < dependencies.length; ++i) {
       const dependency = dependencies[i]
@@ -179,6 +179,6 @@ async function collectDependencies(
     return o
   }
 
-  const o: TopoNode = await collect(absolutePath)
+  const o: ITopoNode = await collect(absolutePath)
   return o
 }

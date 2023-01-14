@@ -1,22 +1,22 @@
-import { isNonBlankString } from '@guanghechen/option-helper'
-import path from 'path'
+import { isNonBlankString } from '@guanghechen/helper-is'
+import path from 'node:path'
 import {
   resolveDependencies,
   resolveLocalDependencyPath,
 } from '../../util/source-handler/dependency'
-import type { GenerateContext } from './context'
-import handleCopy from './handler/handle-copy'
-import handleRemoveAsserts from './handler/handle-remove-asserts'
-import handleRemoveComments from './handler/handle-remove-comments'
-import handleRemoveDefinition from './handler/handle-remove-definitions'
-import handleRemoveFreopen from './handler/handle-remove-freopens'
-import handleRemoveSpaces from './handler/handle-remove-spaces'
-import handleSave from './handler/handle-save'
+import type { IGenerateContext } from './context'
+import { handleCopy } from './handler/handle-copy'
+import { handleRemoveAsserts } from './handler/handle-remove-asserts'
+import { handleRemoveComments } from './handler/handle-remove-comments'
+import { handleRemoveDefinition } from './handler/handle-remove-definitions'
+import { handleRemoveFreopen } from './handler/handle-remove-freopens'
+import { handleRemoveSpaces } from './handler/handle-remove-spaces'
+import { handleSave } from './handler/handle-save'
 
 export class GenerateProcessor {
-  protected readonly context: GenerateContext
+  protected readonly context: IGenerateContext
 
-  constructor(context: GenerateContext) {
+  constructor(context: IGenerateContext) {
     this.context = context
   }
 

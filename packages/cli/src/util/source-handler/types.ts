@@ -1,7 +1,7 @@
 /**
  * A source content piece
  */
-export interface SourcePiece {
+export interface ISourcePiece {
   /**
    * Start position on the source codes.
    */
@@ -23,11 +23,11 @@ export interface SourcePiece {
  * @member namespaces         被导入到当前文件中的命名空间
  * @member typedef            类型别名的语句列表
  */
-export interface SourceItem {
-  macros: SourcePiece[]
-  sources: SourcePiece[]
-  comments: SourcePiece[]
-  literals: SourcePiece[]
+export interface ISourceItem {
+  macros: ISourcePiece[]
+  sources: ISourcePiece[]
+  comments: ISourcePiece[]
+  literals: ISourcePiece[]
   dependencies: string[]
   namespaces: string[]
   typedefs: Map<string, string>

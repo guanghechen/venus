@@ -1,18 +1,18 @@
 import type {
-  SubCommandExecutor,
-  SubCommandMounter,
-  SubCommandProcessor,
-} from '@guanghechen/commander-helper'
+  ISubCommandExecutor,
+  ISubCommandMounter,
+  ISubCommandProcessor,
+} from '@guanghechen/helper-commander'
 import {
   createSubCommandExecutor,
   createSubCommandMounter,
-} from '@guanghechen/commander-helper'
+} from '@guanghechen/helper-commander'
 import type { SubCommandInitOptions } from '../core/init/command'
 import {
   createInitContextFromOptions,
   createSubCommandInit,
 } from '../core/init/command'
-import type { InitContext } from '../core/init/context'
+import type { IInitContext } from '../core/init/context'
 import InitProcessor from '../core/init/processor'
 
 /**
@@ -21,9 +21,9 @@ import InitProcessor from '../core/init/processor'
  * @param options
  * @returns {void|Promise<void>}
  */
-export const processSubCommandInit: SubCommandProcessor<SubCommandInitOptions> =
+export const processSubCommandInit: ISubCommandProcessor<SubCommandInitOptions> =
   async function (options: SubCommandInitOptions): Promise<void> {
-    const context: InitContext = await createInitContextFromOptions(options)
+    const context: IInitContext = await createInitContextFromOptions(options)
     const processor = new InitProcessor(context)
     await processor.init()
   }
@@ -34,7 +34,7 @@ export const processSubCommandInit: SubCommandProcessor<SubCommandInitOptions> =
  * @param {Command}   parentCommand
  * @returns {void}
  */
-export const mountSubCommandInit: SubCommandMounter =
+export const mountSubCommandInit: ISubCommandMounter =
   createSubCommandMounter<SubCommandInitOptions>(
     createSubCommandInit,
     processSubCommandInit,
@@ -47,7 +47,7 @@ export const mountSubCommandInit: SubCommandMounter =
  * @param {string[]}  args
  * @returns {Promise}
  */
-export const execSubCommandInit: SubCommandExecutor =
+export const execSubCommandInit: ISubCommandExecutor =
   createSubCommandExecutor<SubCommandInitOptions>(
     createSubCommandInit,
     processSubCommandInit,

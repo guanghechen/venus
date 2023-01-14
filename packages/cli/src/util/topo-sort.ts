@@ -1,6 +1,6 @@
-export interface TopoNode {
+export interface ITopoNode {
   value: string
-  children: TopoNode[]
+  children: ITopoNode[]
 }
 
 /**
@@ -10,9 +10,9 @@ export interface TopoNode {
  * @param nodeMap
  */
 function calcInDegree(
-  node: TopoNode,
+  node: ITopoNode,
   du: Map<string, number>,
-  nodeMap: Map<string, TopoNode>,
+  nodeMap: Map<string, ITopoNode>,
 ): void {
   if (node == null) return
   nodeMap.set(node.value, node)
@@ -29,9 +29,9 @@ function calcInDegree(
  * Topo sort
  * @param node
  */
-export function toposort(node: TopoNode): string[] {
+export function toposort(node: ITopoNode): string[] {
   const du = new Map<string, number>()
-  const nodeMap = new Map<string, TopoNode>()
+  const nodeMap = new Map<string, ITopoNode>()
   const values: string[] = []
   const q: string[] = []
 
@@ -44,7 +44,7 @@ export function toposort(node: TopoNode): string[] {
   while (q.length > 0) {
     const x: string = q.shift()!
     values.push(x)
-    const u: TopoNode = nodeMap.get(x)!
+    const u: ITopoNode = nodeMap.get(x)!
     for (const v of u.children) {
       du.set(v.value, du.get(v.value)! - 1)
       if (du.get(v.value) === 0) q.push(v.value)

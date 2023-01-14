@@ -1,18 +1,18 @@
 import {
   createInitialCommit,
   installDependencies,
-} from '@guanghechen/commander-helper'
-import { isNonExistentOrEmpty } from '@guanghechen/file-helper'
+} from '@guanghechen/helper-commander'
+import { isNonExistentOrEmpty } from '@guanghechen/helper-path'
 import type execa from 'execa'
-import path from 'path'
-import logger from '../../env/logger'
-import type { InitContext } from './context'
+import path from 'node:path'
+import { logger } from '../../env/logger'
+import type { IInitContext } from './context'
 import { renderTemplates } from './util'
 
 class InitProcessor {
-  protected readonly context: InitContext
+  protected readonly context: IInitContext
 
-  constructor(context: InitContext) {
+  constructor(context: IInitContext) {
     this.context = context
   }
 

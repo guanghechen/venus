@@ -1,11 +1,11 @@
-import { toLowerCase } from '@guanghechen/option-helper'
-import { runPlop } from '@guanghechen/plop-helper'
+import { runPlop } from '@guanghechen/helper-plop'
+import { toLowerCase } from '@guanghechen/helper-string'
 import inquirer from 'inquirer'
 import nodePlop from 'node-plop'
-import path from 'path'
+import path from 'node:path'
 import { templateRootDir } from '../../env/constant'
-import logger from '../../env/logger'
-import type { InitContext } from './context'
+import { logger } from '../../env/logger'
+import type { IInitContext } from './context'
 
 /**
  * Render handlebar boilerplates
@@ -13,7 +13,7 @@ import type { InitContext } from './context'
  * @param plopBypass
  */
 export async function renderTemplates(
-  context: InitContext,
+  context: IInitContext,
   plopBypass: string[],
 ): Promise<void> {
   const availableTemplates: string[] = ['simple']
@@ -43,7 +43,7 @@ export async function renderTemplates(
   logger.debug('templateDir:', templateDir)
   logger.debug('templateConfig:', templateConfig)
 
-  const plop = nodePlop(templateConfig, {
+  const plop = await nodePlop(templateConfig, {
     force: false,
     destBasePath: context.workspace,
   })

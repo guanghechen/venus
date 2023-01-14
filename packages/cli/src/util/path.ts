@@ -1,5 +1,5 @@
-import { isNonBlankString } from '@guanghechen/option-helper'
-import path from 'path'
+import { isNonBlankString } from '@guanghechen/helper-is'
+import path from 'node:path'
 
 /**
  * Check if filepath1 under the filepath2.

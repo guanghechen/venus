@@ -1,9 +1,9 @@
 import fs from 'fs-extra'
-import logger from '../../../env/logger'
+import { logger } from '../../../env/logger'
 import { yesOrNo } from '../../../util/cli'
 import { isExists } from '../../../util/fs'
 import { relativePath } from '../../../util/path'
-import type { GenerateContext } from '../context'
+import type { IGenerateContext } from '../context'
 
 /**
  * Save the contents into an external file.
@@ -11,8 +11,8 @@ import type { GenerateContext } from '../context'
  * @param resolvedConfig
  * @param content
  */
-async function handleSave(
-  context: GenerateContext,
+export async function handleSave(
+  context: IGenerateContext,
   content: string,
 ): Promise<void> {
   const { cwd, workspace, encoding, outputFilepath } = context
@@ -30,5 +30,3 @@ async function handleSave(
   await fs.writeFile(outputFilepath, content, encoding)
   logger.info(`written into ${relativeOutputPath}.`)
 }
-
-export default handleSave

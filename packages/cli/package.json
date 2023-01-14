@@ -38,22 +38,23 @@
     "venus": "lib/cjs/cli.js"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c ../../rollup.config.cli.js",
-    "prebuild": "rimraf lib/",
-    "prepublishOnly": "cross-env ROLLUP_SHOULD_SOURCEMAP=false yarn build",
-    "test": "cross-env TS_NODE_FILES=true jest --config ../../jest.config.js --rootDir ."
+    "build": "rimraf lib/ && cross-env NODE_ENV=production rollup -c ../../rollup.config.cli.mjs",
+    "prepublishOnly": "yarn build",
+    "test": "cross-env TS_NODE_FILES=true jest --config ../../jest.config.mjs --rootDir ."
   },
   "dependencies": {
-    "@guanghechen/chalk-logger": "^1.9.5",
-    "@guanghechen/commander-helper": "^1.9.5",
-    "@guanghechen/file-helper": "^1.9.5",
-    "@guanghechen/locate-helper": "^1.9.5",
-    "@guanghechen/option-helper": "^1.9.5",
-    "@guanghechen/plop-helper": "^1.9.5",
-    "clipboardy": "^2.3.0",
-    "fs-extra": "^10.1.0",
-    "inquirer": "^8.2.0",
+    "@guanghechen/chalk-logger": "^3.0.2",
+    "@guanghechen/helper-commander": "^3.0.2",
+    "@guanghechen/helper-is": "^3.0.2",
+    "@guanghechen/helper-npm": "^3.0.2",
+    "@guanghechen/helper-option": "^3.0.2",
+    "@guanghechen/helper-path": "^3.0.2",
+    "@guanghechen/helper-plop": "^3.0.2",
+    "@guanghechen/helper-string": "^3.0.2",
+    "clipboardy": "^3.0.0",
+    "fs-extra": "^11.1.0",
+    "inquirer": "^9.1.4",
     "js-yaml": "^4.1.0",
-    "node-plop": "^0.26.2"
+    "node-plop": "^0.31.0"
   }
 }

@@ -1,6 +1,6 @@
 import { fileSnapshot } from '@guanghechen/jest-helper'
 import fs from 'fs-extra'
-import path from 'path'
+import path from 'node:path'
 import { COMMAND_NAME, createProgram, execSubCommandGenerate } from '../src'
 
 const removeFiles = (dirpath: string, filenames: string[]): void => {

@@ -1,11 +1,11 @@
-import logger from '../../../env/logger'
+import { logger } from '../../../env/logger'
 import { copy } from '../../../util/copy-paste'
 
 /**
  * Copy contents into system clipboard.
  * @param content
  */
-async function handleCopy(content: string): Promise<void> {
+export async function handleCopy(content: string): Promise<void> {
   try {
     await copy(content)
     logger.info(`Copied to system clipboard.`)
@@ -13,5 +13,3 @@ async function handleCopy(content: string): Promise<void> {
     logger.fatal(`Coping failed:`, error)
   }
 }
-
-export default handleCopy

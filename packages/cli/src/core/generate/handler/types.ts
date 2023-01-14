@@ -1,9 +1,9 @@
-export interface GenerateArgument {
+export interface IGenerateArgument {
   readonly sourcePath: string
   readonly targetPath?: string
 }
 
-export interface GenerateOption {
+export interface IGenerateOption {
   readonly copy?: boolean
   readonly force?: boolean
   readonly outputDirectory?: string
@@ -14,7 +14,7 @@ export interface GenerateOption {
   readonly uglify?: boolean
 }
 
-export interface GenerateConfig {
+export interface IGenerateConfig {
   readonly absoluteSourcePath: string
   readonly absoluteOutputPath: string | null
   readonly force: boolean

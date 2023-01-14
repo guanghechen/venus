@@ -1,32 +1,26 @@
 import type {
-  CommandConfigurationFlatOpts,
-  SubCommandCreator,
-  SubCommandProcessor,
-} from '@guanghechen/commander-helper'
-import { Command } from '@guanghechen/commander-helper'
-import {
-  locateLatestPackageJson,
-  locateNearestFilepath,
-} from '@guanghechen/locate-helper'
-import {
-  cover,
-  coverBoolean,
-  isNonBlankString,
-  isNotEmptyArray,
-} from '@guanghechen/option-helper'
+  ICommandConfigurationFlatOpts,
+  ISubCommandCreator,
+  ISubCommandProcessor,
+} from '@guanghechen/helper-commander'
+import { Command } from '@guanghechen/helper-commander'
+import { isNonBlankString, isNotEmptyArray } from '@guanghechen/helper-is'
+import { locateLatestPackageJson } from '@guanghechen/helper-npm'
+import { cover, coverBoolean } from '@guanghechen/helper-option'
+import { locateNearestFilepath } from '@guanghechen/helper-path'
 import fs from 'fs-extra'
-import path from 'path'
-import { packageName } from '../../env/constant'
-import logger from '../../env/logger'
+import path from 'node:path'
+import { PACKAGE_NAME } from '../../env/constant'
+import { logger } from '../../env/logger'
 import { ensureFileExists } from '../../util/fs'
 import {
   __defaultGlobalCommandOptions,
   resolveGlobalCommandOptions,
 } from '../option'
-import type { GlobalCommandOptions } from '../option'
-import type { GenerateContext } from './context'
+import type { IGlobalCommandOptions } from '../option'
+import type { IGenerateContext } from './context'
 
-interface SubCommandOptions extends GlobalCommandOptions {
+interface ISubCommandOptions extends IGlobalCommandOptions {
   /**
    * Source filepath
    */
@@ -77,7 +71,7 @@ interface SubCommandOptions extends GlobalCommandOptions {
   readonly output: string | null
 }
 
-const __defaultCommandOptions: SubCommandOptions = {
+const __defaultCommandOptions: ISubCommandOptions = {
   ...__defaultGlobalCommandOptions,
   sourceFilepath: '',
   get includes() {
@@ -93,15 +87,15 @@ const __defaultCommandOptions: SubCommandOptions = {
   output: null,
 }
 
-export type SubCommandGenerateOptions = SubCommandOptions &
-  CommandConfigurationFlatOpts
+export type ISubCommandGenerateOptions = ISubCommandOptions &
+  ICommandConfigurationFlatOpts
 
 /**
  * create Sub-command: generate (g)
  */
-export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptions> =
+export const createSubCommandGenerate: ISubCommandCreator<ISubCommandGenerateOptions> =
   function (
-    handle?: SubCommandProcessor<SubCommandGenerateOptions>,
+    handle?: ISubCommandProcessor<ISubCommandGenerateOptions>,
     commandName = 'generate',
     aliases: string[] = ['g'],
   ): Command {
@@ -140,7 +134,7 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
       .option('-o, --output <output filepath>', 'specify the output filepath')
       .action(async function (
         [_sourceFilepath],
-        options: SubCommandGenerateOptions,
+        options: ISubCommandGenerateOptions,
       ) {
         logger.setName(commandName)
 
@@ -151,12 +145,12 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
         ensureFileExists(configFilepath, 'Cannot find the package.json')
 
         const _workspaceDir = path.dirname(configFilepath!)
-        const defaultOptions: SubCommandGenerateOptions =
+        const defaultOptions: ISubCommandGenerateOptions =
           resolveGlobalCommandOptions(
-            packageName,
+            PACKAGE_NAME,
             commandName,
-            _workspaceDir,
             __defaultCommandOptions,
+            _workspaceDir,
             options,
           )
 
@@ -243,7 +237,7 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
         )
         logger.debug('output:', output)
 
-        const resolvedOptions: SubCommandGenerateOptions = {
+        const resolvedOptions: ISubCommandGenerateOptions = {
           ...defaultOptions,
           sourceFilepath,
           includes,
@@ -270,9 +264,9 @@ export const createSubCommandGenerate: SubCommandCreator<SubCommandGenerateOptio
  * @param options
  */
 export async function createGenerateContextFromOptions(
-  options: SubCommandGenerateOptions,
-): Promise<GenerateContext> {
-  const context: GenerateContext = {
+  options: ISubCommandGenerateOptions,
+): Promise<IGenerateContext> {
+  const context: IGenerateContext = {
     cwd: options.cwd,
     workspace: options.workspace,
     encoding: options.encoding,

@@ -1,4 +1,4 @@
-import type { SourceItem } from './types'
+import type { ISourceItem } from './types'
 
 /**
  * Token of cpp source codes
@@ -6,7 +6,7 @@ import type { SourceItem } from './types'
  * @member rank
  * @member content
  */
-interface Token {
+interface IToken {
   type: 'macro' | 'source' | 'comment' | 'literal'
   rank: number
   content: string
@@ -18,39 +18,39 @@ interface Token {
  *
  * @param sourceItem
  */
-export function merge(sourceItem: SourceItem): string {
+export function merge(sourceItem: ISourceItem): string {
   const contentPieces: string[] = [
     ...sourceItem.macros.map(
-      ({ start, content }): Token => ({
+      ({ start, content }): IToken => ({
         type: 'macro',
         rank: start,
         content,
       }),
     ),
     ...sourceItem.sources.map(
-      ({ start, content }): Token => ({
+      ({ start, content }): IToken => ({
         type: 'source',
         rank: start,
         content,
       }),
     ),
     ...sourceItem.comments.map(
-      ({ start, content }): Token => ({
+      ({ start, content }): IToken => ({
         type: 'comment',
         rank: start,
         content,
       }),
     ),
     ...sourceItem.literals.map(
-      ({ start, content }): Token => ({
+      ({ start, content }): IToken => ({
         type: 'literal',
         rank: start,
         content,
       }),
     ),
   ]
-    .sort((x: Token, y: Token): number => x.rank - y.rank)
-    .map((token: Token): string => {
+    .sort((x: IToken, y: IToken): number => x.rank - y.rank)
+    .map((token: IToken): string => {
       if (token.type === 'macro') {
         return token.content.replace(/^[\n]*/, '').trimRight() + '\n'
       }

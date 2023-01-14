@@ -1,16 +1,17 @@
+import { resolveCommandConfigurationOptions } from '@guanghechen/helper-commander'
 import type {
-  CommandConfigurationFlatOpts,
-  CommandConfigurationOptions,
-  MergeStrategy,
-} from '@guanghechen/commander-helper'
-import { resolveCommandConfigurationOptions } from '@guanghechen/commander-helper'
-import { cover, isNonBlankString } from '@guanghechen/option-helper'
-import logger from '../env/logger'
+  ICommandConfigurationFlatOpts,
+  ICommandConfigurationOptions,
+  IMergeStrategy,
+} from '@guanghechen/helper-commander'
+import { isNonBlankString } from '@guanghechen/helper-is'
+import { cover } from '@guanghechen/helper-option'
+import { logger } from '../env/logger'
 
 /**
  * Global command options
  */
-export interface GlobalCommandOptions extends CommandConfigurationOptions {
+export interface IGlobalCommandOptions extends ICommandConfigurationOptions {
   /**
    * default encoding of files in the workspace
    * @default utf-8
@@ -21,7 +22,7 @@ export interface GlobalCommandOptions extends CommandConfigurationOptions {
 /**
  * Default value of global options
  */
-export const __defaultGlobalCommandOptions: GlobalCommandOptions = {
+export const __defaultGlobalCommandOptions: IGlobalCommandOptions = {
   encoding: 'utf-8',
 }
 
@@ -30,26 +31,21 @@ export const __defaultGlobalCommandOptions: GlobalCommandOptions = {
  *
  * @param commandName
  * @param subCommandName
- * @param workspaceDir
  * @param defaultOptions
+ * @param workspaceDir
  * @param options
- * @param strategies
  * @returns
  */
-export function resolveGlobalCommandOptions<C extends Record<string, unknown>>(
+export function resolveGlobalCommandOptions<C extends object>(
   commandName: string,
   subCommandName: string | false,
-  workspaceDir: string,
   defaultOptions: C,
-  options: C & GlobalCommandOptions,
-  strategies: Partial<
-    Record<keyof (C & GlobalCommandOptions), MergeStrategy>
-  > = {},
-): C & GlobalCommandOptions & CommandConfigurationFlatOpts {
-  type R = C & GlobalCommandOptions & CommandConfigurationFlatOpts
+  workspaceDir: string,
+  options: C & IGlobalCommandOptions,
+): C & IGlobalCommandOptions & ICommandConfigurationFlatOpts {
+  type R = C & IGlobalCommandOptions & ICommandConfigurationFlatOpts
   const resolvedDefaultOptions: R = resolveCommandConfigurationOptions<
-    C & GlobalCommandOptions,
-    C & GlobalCommandOptions
+    C & IGlobalCommandOptions
   >(
     logger,
     commandName,
@@ -57,7 +53,6 @@ export function resolveGlobalCommandOptions<C extends Record<string, unknown>>(
     workspaceDir,
     { ...__defaultGlobalCommandOptions, ...defaultOptions },
     options,
-    strategies,
   )
 
   // Resolve encoding.

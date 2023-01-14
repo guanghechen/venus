@@ -1,7 +1,10 @@
-import { fileSnapshot } from '@guanghechen/jest-helper'
-import fs from 'fs-extra'
+import { fileSnapshot } from '@guanghechen/helper-jest'
+import fs from 'node:fs'
 import path from 'node:path'
+import url from 'node:url'
 import { COMMAND_NAME, createProgram, execSubCommandGenerate } from '../src'
+
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
 const removeFiles = (dirpath: string, filenames: string[]): void => {
   for (const filename of filenames) {

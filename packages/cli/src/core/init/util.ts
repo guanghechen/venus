@@ -38,7 +38,7 @@ export async function renderTemplates(
   }
 
   const templateDir = path.join(templateRootDir, templateName)
-  const templateConfig = path.join(templateDir, 'plop.js')
+  const templateConfig = path.join(templateDir, 'plop.mjs')
   logger.debug('templateName:', templateName)
   logger.debug('templateDir:', templateDir)
   logger.debug('templateConfig:', templateConfig)

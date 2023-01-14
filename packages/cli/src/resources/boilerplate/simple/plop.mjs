@@ -1,8 +1,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-const manifest = require('venus-acm/package.json')
-const path = require('path')
+import manifest from 'venus-acm/package.json'
+import path from 'node:path'
+import url from 'node:url'
 
-module.exports = function (plop) {
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
+
+export default function(plop) {
   plop.setGenerator('mock-server', {
     description: 'create mock server',
     prompts: [

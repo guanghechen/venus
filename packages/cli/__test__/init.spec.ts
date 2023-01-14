@@ -1,14 +1,18 @@
-import { absoluteOfWorkspace } from '@guanghechen/file-helper'
-import { fileSnapshot } from '@guanghechen/jest-helper'
-import fs from 'fs-extra'
+import { fileSnapshot } from '@guanghechen/helper-jest'
+import { absoluteOfWorkspace } from '@guanghechen/helper-path'
 import globby from 'globby'
+import fs from 'node:fs'
 import path from 'node:path'
+import url from 'node:url'
 import { COMMAND_NAME, createProgram, execSubCommandInit } from '../src'
+
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url))
 
 describe('init', function () {
   // clear output directory before run test
   const outputWorkspace = absoluteOfWorkspace(__dirname, '__tmp__/simple')
-  fs.removeSync(outputWorkspace)
+  if (fs.existsSync(outputWorkspace))
+    fs.rmSync(outputWorkspace, { recursive: true })
 
   test(
     'simple',
@@ -30,7 +34,7 @@ describe('init', function () {
 
       // write the outputs to snapshots
       const files = (
-        await globby(['*', '**/*'], {
+        await globby.globby(['*', '**/*'], {
           cwd: outputWorkspace,
           onlyFiles: true,
           expandDirectories: false,

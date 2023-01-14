@@ -1,7 +1,6 @@
 import fs from 'fs-extra'
 import { logger } from '../../../env/logger'
 import { yesOrNo } from '../../../util/cli'
-import { isExists } from '../../../util/fs'
 import { relativePath } from '../../../util/path'
 import type { IGenerateContext } from '../context'
 
@@ -22,7 +21,7 @@ export async function handleSave(
   // Use relative path for a friendly hint.
   const relativeOutputPath = relativePath(outputFilepath, cwd, workspace)
 
-  if (!context.force && isExists(outputFilepath)) {
+  if (!context.force && fs.existsSync(outputFilepath)) {
     const confirm: boolean = await yesOrNo(`overwrite ${relativeOutputPath}`)
     if (!confirm) return
   }

@@ -7,12 +7,14 @@ import { Command } from '@guanghechen/helper-commander'
 import { isNonBlankString, isNotEmptyArray } from '@guanghechen/helper-is'
 import { locateLatestPackageJson } from '@guanghechen/helper-npm'
 import { cover, coverBoolean } from '@guanghechen/helper-option'
-import { locateNearestFilepath } from '@guanghechen/helper-path'
+import {
+  ensureCriticalFilepathExistsSync,
+  locateNearestFilepath,
+} from '@guanghechen/helper-path'
 import fs from 'fs-extra'
 import path from 'node:path'
 import { PACKAGE_NAME } from '../../env/constant'
 import { logger } from '../../env/logger'
-import { ensureFileExists } from '../../util/fs'
 import {
   __defaultGlobalCommandOptions,
   resolveGlobalCommandOptions,
@@ -142,7 +144,7 @@ export const createSubCommandGenerate: ISubCommandCreator<ISubCommandGenerateOpt
         const configFilepath = locateLatestPackageJson(sourceFilepath)
 
         logger.debug('sourceFilepath:', sourceFilepath)
-        ensureFileExists(configFilepath, 'Cannot find the package.json')
+        ensureCriticalFilepathExistsSync(configFilepath)
 
         const _workspaceDir = path.dirname(configFilepath!)
         const defaultOptions: ISubCommandGenerateOptions =

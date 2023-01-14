@@ -1,8 +1,11 @@
 import { isNonBlankString } from '@guanghechen/helper-is'
+import {
+  ensureCriticalFilepathExistsSync,
+  isFileSync,
+} from '@guanghechen/helper-path'
 import fs from 'fs-extra'
 import path from 'node:path'
 import { logger } from '../../env/logger'
-import { ensureFileExists, isFile } from '../fs'
 import { toposort } from '../topo-sort'
 import type { ITopoNode } from '../topo-sort'
 import merge from './merge'
@@ -27,7 +30,7 @@ export function resolveLocalDependencyPath(
         includes[i],
         dependency,
       )
-      if (isFile(absoluteDependencyPath)) {
+      if (isFileSync(absoluteDependencyPath)) {
         resolvedDependency = absoluteDependencyPath
         break
       }
@@ -39,7 +42,7 @@ export function resolveLocalDependencyPath(
         absoluteSourceDirectory,
         dependency,
       )
-      if (isFile(absoluteDependencyPath)) {
+      if (isFileSync(absoluteDependencyPath)) {
         resolvedDependency = absoluteDependencyPath
       }
     }
@@ -87,7 +90,7 @@ export async function resolveDependencies(
   // 按照依赖的拓扑序将代码拼接，并将源文件添加到末尾，使得生成的代码中出现在最下面
   localDependencies.push(absoluteSourcePath)
   for (const dependency of localDependencies) {
-    ensureFileExists(dependency)
+    ensureCriticalFilepathExistsSync(dependency)
     const content = await fs.readFile(dependency, { encoding })
     const sourceItem = parse(content)
     namespaces.push(...sourceItem.namespaces)
@@ -133,7 +136,7 @@ async function collectDependencies(
   const topoNodeMap: Map<string, ITopoNode> = new Map<string, ITopoNode>()
 
   async function collect(absolutePath: string): Promise<ITopoNode> {
-    ensureFileExists(absolutePath)
+    ensureCriticalFilepathExistsSync(absolutePath)
     const content = await fs.readFile(absolutePath, { encoding })
     const dependencies = parse(content).dependencies.filter(isNonBlankString)
 
